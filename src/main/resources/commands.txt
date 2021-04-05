@@ -1,0 +1,1 @@
+protoc -I=${ABS_PATH}/proj/src/main/resources --java_out=src/main/java/ xxx.proto
