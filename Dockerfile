@@ -6,5 +6,5 @@ ADD . /deploy/
 RUN gradle clean build -x test
 
 ADD . /deploy
-EXPOSE 12345
-ENTRYPOINT ["gradle", "run"]
+EXPOSE 12348
+ENTRYPOINT ["gradle", "bootRun"]
