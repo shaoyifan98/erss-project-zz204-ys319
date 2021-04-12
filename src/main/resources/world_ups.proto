@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-option java_package = "edu.duke.erss.proto.UPStoWorld";
+option java_package = "edu.duke.erss.ups.proto.UPStoWorld";
 option java_multiple_files = true;
 option optimize_for = CODE_SIZE;
 

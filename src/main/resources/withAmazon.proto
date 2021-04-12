@@ -2,7 +2,7 @@ syntax = "proto2";
 
 package tutorial;
 
-option java_package = "edu.duke.erss.proto.UPStoAmazon";
+option java_package = "edu.duke.erss.ups.proto.UPStoAmazon";
 //option java_outer_classname = "AmazonMessage";
 option java_multiple_files = true;
 option optimize_for = CODE_SIZE;
@@ -33,8 +33,8 @@ message UPSTruckArrive {
   required int64 seq = 1;
   required int32 truckID = 2;
   required int32 whnum = 3;
-  required int64 shipid = 4; //(repeated?)
-  optional int64 trackingNum = 5;
+  repeated int64 shipid = 4; //(repeated?)
+  repeated int64 trackingNum = 5;
 }
 
 message AmazonLoaded {
