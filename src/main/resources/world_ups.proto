@@ -1,4 +1,9 @@
 syntax = "proto2";
+
+option java_package = "edu.duke.erss.proto.UPStoWorld";
+option java_multiple_files = true;
+option optimize_for = CODE_SIZE;
+
 message UInitTruck{
   required int32 id = 1;
   required int32 x=2;

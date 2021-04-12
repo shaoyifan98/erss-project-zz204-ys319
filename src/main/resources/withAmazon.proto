@@ -2,8 +2,8 @@ syntax = "proto2";
 
 package tutorial;
 
-option java_package = "edu.duke.erss.proto";
-option java_outer_classname = "AmazonMessage";
+option java_package = "edu.duke.erss.proto.UPStoAmazon";
+//option java_outer_classname = "AmazonMessage";
 option java_multiple_files = true;
 option optimize_for = CODE_SIZE;
 
@@ -16,20 +16,46 @@ message DateTime {
   required int32 second = 6;
 }
 
-message AmazonBuy {
-  required string productName = 1;
-  required int32 orderID = 2;
-  required DateTime openTime = 3;
-  optional float price = 4;
+message UAConnect{
+  required int64 worldid = 1;
 }
 
-message AssociateWithUPS {
-  required int32 orderID = 1;
-  optional string upsAccount = 2;
-  optional string upsPasswd = 3;
+message AmazonPick {
+  required int64 shipid = 1;
+  required int32 x = 2;
+  required int32 y = 3;
+  required int32 whnum = 4;
+  required int64 seq = 5;
+  optional string upsAccount = 6;
 }
 
-message AmazonBuyResponse {
-  required int64 trackingNum = 1;
-  optional bool isAuthenticated = 2;
+message UPSTruckArrive {
+  required int64 seq = 1;
+  required int32 truckID = 2;
+  required int32 whnum = 3;
+  required int64 shipid = 4; //(repeated?)
+  optional int64 trackingNum = 5;
+}
+
+message AmazonLoaded {
+  required int64 shipid = 1;
+  required int64 seq = 2;
+  required int32 truckID = 3;
+}
+
+message UPSDelivered{
+  required int64 shipid = 1;
+  required int64 seq = 2;
+}
+
+message UACommands {
+  repeated AmazonPick pick = 1;
+  repeated AmazonLoaded load = 2;
+  repeated int64 acks = 3;
+}
+
+message UAResponses {
+  repeated UPSTruckArrive arrive = 1;
+  repeated UPSDelivered deliver = 2;
+  repeated int64 acks = 3;
 }
