@@ -18,7 +18,7 @@
     <insert id="insertNewTracking" parameterType="edu.duke.erss.ups.entity.ShipInfo"
             useGeneratedKeys="true" keyColumn="tracking_id" keyProperty="shipInfo.trackingID">
         insert into tracking_ship_tb (ship_id,status)
-        values (#{shipInfo.shipID},#{shipInfo.status})
+        values (#{shipInfo.shipID},#{shipInfo.status});
     </insert>
     <update id="updateTracking" parameterType="edu.duke.erss.ups.entity.ShipInfo">
         update tracking_ship_tb
@@ -26,11 +26,11 @@
             status=#{shipInfo.status},
             dest_x=#{shipInfo.destX},
             dest_y=#{shipInfo.destY}
-        where tracking_id=#{shipInfo.trackingID}
+        where tracking_id=#{shipInfo.trackingID};
     </update>
     <select id="getShipInfoByShipID" resultMap="shipInfoList">
         SELECT *
         FROM tracking_ship_tb
-        WHERE ship_id=#{shipID}
+        WHERE ship_id=#{shipID};
     </select>
 </mapper>

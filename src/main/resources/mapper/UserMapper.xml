@@ -11,4 +11,9 @@
     <select id="getAll" resultMap="userList">
         SELECT * FROM USER_TB;
     </select>
+    <select id="getUserByName" resultMap="userList">
+        SELECT *
+        FROM USER_TB
+        WHERE username=#{username};
+    </select>
 </mapper>

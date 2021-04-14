@@ -3,7 +3,6 @@ package edu.duke.erss.ups.dao;
 import edu.duke.erss.ups.entity.ShipInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
