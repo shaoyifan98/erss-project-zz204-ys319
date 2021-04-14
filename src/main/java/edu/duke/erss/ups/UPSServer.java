@@ -29,10 +29,17 @@ public class UPSServer {
     }
 
     void listen() throws IOException {
-        while (true) {
-            Socket client = serverSocket.accept();
-            new Thread(() -> handle(client)).start();
-        }
+        new Thread(() -> {
+            while (true) {
+                Socket client = null;
+                try {
+                    client = serverSocket.accept();
+                    handle(client);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     @PreDestroy

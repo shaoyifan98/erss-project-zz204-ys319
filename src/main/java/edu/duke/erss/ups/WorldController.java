@@ -98,7 +98,7 @@ public class WorldController{
                 //reading from world
                 readInitialize();
                 //send to amazon
-                informAmazon();
+//                informAmazon();
                 //start listen world messages
                 startListener();
             }
