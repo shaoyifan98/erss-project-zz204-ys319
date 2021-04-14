@@ -6,6 +6,7 @@ import edu.duke.erss.ups.proto.UPStoAmazon.UACommands;
 import edu.duke.erss.ups.proto.UPStoAmazon.UAConnect;
 import edu.duke.erss.ups.proto.UPStoAmazon.UAResponses;
 import edu.duke.erss.ups.proto.UPStoAmazon.UPSTruckArrive;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,9 @@ public class AmazonController {
     private static AtomicLong seqNum;
     private final int TIME_OUT = 10 * 1000;
     private CommandHandler commandHandler;
+
+    @Autowired
+    WorldController worldController;
 
     AmazonController() {
         this("127.0.0.1", 12348);

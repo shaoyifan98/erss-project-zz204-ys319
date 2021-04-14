@@ -9,6 +9,6 @@
     </resultMap>
 
     <select id="getAll" resultMap="userList">
-        SELECT * FROM USER;
+        SELECT * FROM USER_TB;
     </select>
 </mapper>

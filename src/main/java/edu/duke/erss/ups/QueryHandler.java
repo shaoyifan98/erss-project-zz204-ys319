@@ -13,14 +13,17 @@ public class QueryHandler extends WorldCommandHandler {
 
     Integer whID;
 
+    Long pickSeq;
+
     QueryHandler(long seq, int truckID, WorldController worldController, boolean goPickUp) {
         super(seq, truckID, worldController);
         this.goPickUp = goPickUp;
     }
 
-    QueryHandler(long seq, int truckID, WorldController worldController, boolean goPickUp, int whID) {
+    QueryHandler(long seq, int truckID, WorldController worldController, boolean goPickUp, int whID, long pickSeq) {
         this(seq, truckID, worldController, goPickUp);
         this.whID = whID;
+        this.pickSeq = pickSeq;
     }
 
     @Override
@@ -29,7 +32,7 @@ public class QueryHandler extends WorldCommandHandler {
             @Override
             public void run() {
                 try {
-                    worldController.sendQuery(seq, truckID, goPickUp, whID);
+                    worldController.sendQuery(seq, truckID, goPickUp, whID, pickSeq);
                 }
                 catch (IOException e) {
                     System.out.println("Timer task IO exception: " + e.getMessage());

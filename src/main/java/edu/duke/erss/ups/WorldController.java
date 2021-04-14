@@ -14,7 +14,6 @@ import java.util.Random;
 
 @Component
 public class WorldController{
-
     private final String HOST = "67.159.88.254";
     private final int PORT = 12345;
     private final Socket connection;
@@ -39,7 +38,6 @@ public class WorldController{
         this.seqHandlerMap = new HashMap<>();
         seq = 0;
         initialize();
-        startListener();
     }
 
     /**
@@ -101,6 +99,8 @@ public class WorldController{
                 readInitialize();
                 //send to amazon
                 informAmazon();
+                //start listen world messages
+                startListener();
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -159,12 +159,16 @@ public class WorldController{
             try {
                 //writing
                 Long seqNum = seq++;
-                sendQuery(seqNum, truckID, goPickUp, whID);
+                sendQuery(seqNum, truckID, goPickUp, whID, -1);
             }
             catch (IOException e) {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    void queryWorldWithSeq(long pickSeq, int truckID, boolean goPickUp, int whID) throws IOException {
+        sendQuery(seq++, truckID, goPickUp, whID, pickSeq);
     }
 
     /**
@@ -175,7 +179,7 @@ public class WorldController{
      * @param whID warehouse id if go pick up
      * @throws IOException
      */
-    public void sendQuery(long seqNum, int truckID, boolean goPickUp, int whID) throws IOException {
+    public void sendQuery(long seqNum, int truckID, boolean goPickUp, int whID, long pickSeq) throws IOException {
         CodedOutputStream output = CodedOutputStream.newInstance(connection.getOutputStream());
         UCommands.Builder uCommandB = UCommands.newBuilder();
         UQuery.Builder uQueryB = UQuery.newBuilder();
@@ -188,7 +192,7 @@ public class WorldController{
             //putting in the map
             QueryHandler queryHandler;
             if (goPickUp) {
-                queryHandler = new QueryHandler(seqNum, truckID, this, goPickUp, whID);
+                queryHandler = new QueryHandler(seqNum, truckID, this, goPickUp, whID, pickSeq);
             }
             else {
                 queryHandler = new QueryHandler(seqNum, truckID, this, goPickUp);
@@ -214,17 +218,30 @@ public class WorldController{
     }
 
     /**
+     * Call this to send truck to pick up
+     * @param whID warehouse to pick up
+     */
+    public void allocateAvailableTrucks(long seqNum, int whID) throws IOException {
+        int randId = new Random().nextInt(TRUCK_CNT);
+        queryWorldWithSeq(seqNum, randId, true, whID);
+    }
+
+    /**
      * Send pick up instructions
      * Note: call this only after making sure truck is available
      * @param truckID truck id
      * @param whID warehouse id
      * @throws IOException
      */
-    void pickUp(int truckID, int whID) throws IOException {
+    public void pickUp(int truckID, int whID) throws IOException {
+        long seqNum = seq++;
+        pickUp(seqNum, truckID, whID);
+    }
+
+    public void pickUp(long seqNum, int truckID, int whID) throws IOException {
         CodedOutputStream output = CodedOutputStream.newInstance(connection.getOutputStream());
         UCommands.Builder uCommandB = UCommands.newBuilder();
         UGoPickup.Builder uGoPickB = UGoPickup.newBuilder();
-        long seqNum = seq++;
         uGoPickB.setSeqnum(seqNum).setTruckid(truckID).setWhid(whID);
         uCommandB.addPickups(uGoPickB.build());
         if (!seqHandlerMap.containsKey(seqNum)) {

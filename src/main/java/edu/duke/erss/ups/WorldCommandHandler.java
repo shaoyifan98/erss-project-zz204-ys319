@@ -20,6 +20,10 @@ public abstract class WorldCommandHandler {
 
     TimerTask resend;
 
+    WorldCommandHandler() {
+
+    }
+
     WorldCommandHandler(long seq, int truckID, WorldController worldController) {
         this.seq = seq;
         this.truckID = truckID;
