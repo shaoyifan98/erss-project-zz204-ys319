@@ -9,3 +9,11 @@ build
 build/
 
 .vscode
+
+.classpath
+
+.project
+
+bin
+
+.settings
