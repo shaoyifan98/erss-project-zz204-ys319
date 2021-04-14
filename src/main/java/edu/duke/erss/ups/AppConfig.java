@@ -14,7 +14,7 @@ public class AppConfig {
     }
 
     @Bean
-    public WorldController getWorldController() {
+    public WorldController getWorldController() throws IOException {
         return new WorldController();
     }
 }
