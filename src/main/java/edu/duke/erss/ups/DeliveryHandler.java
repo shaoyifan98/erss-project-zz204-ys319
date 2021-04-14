@@ -1,5 +1,8 @@
 package edu.duke.erss.ups;
 
+import edu.duke.erss.ups.dao.TrackingShipDao;
+import edu.duke.erss.ups.entity.ShipInfo;
+import edu.duke.erss.ups.entity.ShipStatus;
 import edu.duke.erss.ups.proto.UPStoWorld.UDeliveryLocation;
 import edu.duke.erss.ups.proto.UPStoWorld.UDeliveryMade;
 import edu.duke.erss.ups.proto.UPStoWorld.UResponses;
@@ -12,9 +15,15 @@ public class DeliveryHandler extends WorldCommandHandler {
 
     ArrayList<UDeliveryLocation> locations;
 
-    DeliveryHandler(long seq, int truckID, WorldController worldController) {
-        super(seq, truckID, worldController);
+    ShipInfo shipInfo;
+
+    private TrackingShipDao trackingShipDao;
+
+    DeliveryHandler(long seq, WorldController worldController, ShipInfo shipInfo, TrackingShipDao trackingShipDao) {
+        super(seq, shipInfo.getTruckID(), worldController);
         this.locations = new ArrayList<>();
+        this.shipInfo = shipInfo;
+        this.trackingShipDao = trackingShipDao;
     }
 
     public void addLocations(ArrayList<UDeliveryLocation> locations) {
@@ -27,7 +36,7 @@ public class DeliveryHandler extends WorldCommandHandler {
             @Override
             public void run() {
                 try {
-                    worldController.goDeliver(truckID, locations);
+                    worldController.goDeliver(shipInfo);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -57,8 +66,11 @@ public class DeliveryHandler extends WorldCommandHandler {
                 worldController.sendAckCommand(uDeliveryMade.getSeqnum());
 
                 // TODO database Package delivered
+                shipInfo.setStatus(ShipStatus.DELIVERED.getText());
+                trackingShipDao.updateTracking(shipInfo);
 
                 // TODO inform amazon
+                worldController.amazonController.sendPackageDelivered(shipInfo);
 
             } catch (IOException e) {
                 System.out.println(e.getMessage());

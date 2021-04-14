@@ -2,13 +2,10 @@ package edu.duke.erss.ups;
 
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.CodedOutputStream;
-import edu.duke.erss.ups.proto.UPStoAmazon.UACommands;
-import edu.duke.erss.ups.proto.UPStoAmazon.UAConnect;
-import edu.duke.erss.ups.proto.UPStoAmazon.UAResponses;
-import edu.duke.erss.ups.proto.UPStoAmazon.UPSTruckArrive;
+import edu.duke.erss.ups.entity.ShipInfo;
+import edu.duke.erss.ups.proto.UPStoAmazon.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.Socket;
@@ -21,7 +18,6 @@ public class AmazonController {
     private int port;
     private static AtomicLong seqNum;
     private final int TIME_OUT = 10 * 1000;
-    private CommandHandler commandHandler;
 
     @Autowired
     WorldController worldController;
@@ -34,7 +30,6 @@ public class AmazonController {
         this.host = host;
         this.port = port;
         seqNum = new AtomicLong(0);
-        this.commandHandler = new CommandHandler();
     }
 
     /**
@@ -87,19 +82,9 @@ public class AmazonController {
                 uaTruckArrive.addAllShipid(shipIDs);
                 uaResponse.addArrive(uaTruckArrive);
                 UAResponses responses = uaResponse.build();
-                byte[] data = responses.toByteArray();
-                output.writeUInt32NoTag(data.length);
-                responses.writeTo(output);
-                output.flush();
-                //reading
-                CodedInputStream input = CodedInputStream.newInstance(socket.getInputStream());
-                int size = input.readUInt32();
-                int limit = input.pushLimit(size);
-                UACommands uaCommands = UACommands.parseFrom(input);
-                input.popLimit(limit);
-                //handling response
-                commandHandler.handleUACommandResponse(uaCommands, seq);
-                socket.close();
+                sendResponse(output, responses);
+
+                handleAck(socket, seq);
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -107,7 +92,48 @@ public class AmazonController {
         }).start();
     }
 
-    public void sendPackageDelivered() {
+    public void sendPackageDelivered(ShipInfo shipInfo) {
+        new Thread(() -> {
+            try {
+                Socket socket = new Socket(host, port);
+                socket.setSoTimeout(TIME_OUT);
+                //writing
+                CodedOutputStream output = CodedOutputStream.newInstance(socket.getOutputStream());
+                UAResponses.Builder uaResponseB = UAResponses.newBuilder();
+                UPSDelivered.Builder uDeliverB = UPSDelivered.newBuilder();
+                long seq = seqNum.getAndAdd(1);
+                uDeliverB.setSeq(seq);
+                uDeliverB.setShipid(shipInfo.getShipID());
+                uaResponseB.addDeliver(uDeliverB.build());
+                UAResponses responses = uaResponseB.build();
+                sendResponse(output, responses);
 
+                handleAck(socket, seq);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    void sendResponse(CodedOutputStream output, UAResponses responses) throws IOException{
+        byte[] data = responses.toByteArray();
+        output.writeUInt32NoTag(data.length);
+        responses.writeTo(output);
+        output.flush();
+    }
+
+    void handleAck(Socket socket, long seq) throws IOException {
+        //reading
+        CodedInputStream input = CodedInputStream.newInstance(socket.getInputStream());
+        int size = input.readUInt32();
+        int limit = input.pushLimit(size);
+        UACommands uaCommands = UACommands.parseFrom(input);
+        long ack = uaCommands.getAcks(0);
+        input.popLimit(limit);
+        socket.close();
+        if (ack != seq) {
+            throw new RuntimeException("Receive mismatched seq and ack :(" + seq + "," + ack + ")");
+        }
     }
 }

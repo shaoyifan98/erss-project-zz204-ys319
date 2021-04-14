@@ -1,5 +1,8 @@
 package edu.duke.erss.ups;
 
+import edu.duke.erss.ups.dao.TrackingShipDao;
+import edu.duke.erss.ups.entity.ShipInfo;
+import edu.duke.erss.ups.entity.ShipStatus;
 import edu.duke.erss.ups.entity.Truck;
 import edu.duke.erss.ups.proto.UPStoWorld.UResponses;
 import edu.duke.erss.ups.proto.UPStoWorld.UTruck;
@@ -11,19 +14,23 @@ public class QueryHandler extends WorldCommandHandler {
 
     Boolean goPickUp;
 
-    Integer whID;
-
     Long pickSeq;
+
+    ShipInfo info;
+
+    TrackingShipDao trackingShipDao;
 
     QueryHandler(long seq, int truckID, WorldController worldController, boolean goPickUp) {
         super(seq, truckID, worldController);
         this.goPickUp = goPickUp;
     }
 
-    QueryHandler(long seq, int truckID, WorldController worldController, boolean goPickUp, int whID, long pickSeq) {
+    QueryHandler(long seq, int truckID, WorldController worldController,
+                 boolean goPickUp, long pickSeq, ShipInfo shipInfo, TrackingShipDao trackingShipDao) {
         this(seq, truckID, worldController, goPickUp);
-        this.whID = whID;
         this.pickSeq = pickSeq;
+        this.info = shipInfo;
+        this.trackingShipDao = trackingShipDao;
     }
 
     @Override
@@ -32,7 +39,7 @@ public class QueryHandler extends WorldCommandHandler {
             @Override
             public void run() {
                 try {
-                    worldController.sendQuery(seq, truckID, goPickUp, whID, pickSeq);
+                    worldController.sendQuery(seq, truckID, goPickUp, pickSeq, info);
                 }
                 catch (IOException e) {
                     System.out.println("Timer task IO exception: " + e.getMessage());
@@ -50,7 +57,7 @@ public class QueryHandler extends WorldCommandHandler {
 
             // if the truck is busy
             if (uTruck.getStatus().equals(Truck.Status.TRAVELING.getText())) {
-                worldController.allocateAvailableTrucks(whID);
+                worldController.allocateAvailableTrucks(info);
                 return;
             }
 
@@ -59,15 +66,18 @@ public class QueryHandler extends WorldCommandHandler {
             if (goPickUp) {
                 try {
                     worldController.sendAckCommand(uTruck.getSeqnum()); //send back ack of the seq of the query
-                    worldController.pickUp(truckID, whID); // send truck pick up
+                    worldController.pickUp(truckID, info); // send truck pick up
+                    //update database order
+                    //en route db update
+                    info.setTruckID(truckID);
+                    info.setStatus(ShipStatus.INROUTE.getText());
+                    trackingShipDao.updateTracking(info);
                 }
                 catch (IOException e) {
                     System.out.println("Picking up IO exception ... " + e.getMessage());
                     return;
                 }
             }
-
-            // TODO update database order
 
         }).start();
     }

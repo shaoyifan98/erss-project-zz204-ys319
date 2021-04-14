@@ -1,6 +1,8 @@
 package edu.duke.erss.ups;
 
 import edu.duke.erss.ups.dao.TrackingShipDao;
+import edu.duke.erss.ups.entity.ShipInfo;
+import edu.duke.erss.ups.entity.ShipStatus;
 import edu.duke.erss.ups.entity.Truck;
 import edu.duke.erss.ups.proto.UPStoWorld.UFinished;
 import edu.duke.erss.ups.proto.UPStoWorld.UResponses;
@@ -9,23 +11,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.TimerTask;
 
-@Component
 public class PickUpHandler extends WorldCommandHandler {
 
-    Integer whID;
+    ShipInfo shipInfo;
 
-    @Autowired
     TrackingShipDao trackingShipDao;
 
-    PickUpHandler() {
-
-    }
-
-    PickUpHandler(long seq, int truckID, int whID, WorldController worldController) {
+    PickUpHandler(long seq, int truckID, ShipInfo shipInfo, WorldController worldController, TrackingShipDao trackingShipDao) {
         super(seq, truckID, worldController);
-        this.whID = whID;
+        this.shipInfo = shipInfo;
+        this.trackingShipDao = trackingShipDao;
     }
 
     @Override
@@ -34,7 +32,7 @@ public class PickUpHandler extends WorldCommandHandler {
             @Override
             public void run() {
                 try {
-                    worldController.allocateAvailableTrucks(seq, whID);
+                    worldController.allocateAvailableTrucks(seq, shipInfo);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -52,10 +50,14 @@ public class PickUpHandler extends WorldCommandHandler {
                 System.out.println("Truck " + uFinished.getTruckid() + " status: " + uFinished.getStatus());
                 worldController.sendAckCommand(uFinished.getSeqnum());
 
-                //TODO database operation : truck arrive, waiting for package
+                //database operation : truck arrive, waiting for package
+                shipInfo.setStatus(ShipStatus.WAITING.getText());
+                trackingShipDao.updateTracking(shipInfo);
 
-
-                //TODO inform amazon to load
+                //inform amazon to load
+                ArrayList<Long> shipIDs = new ArrayList<>();
+                shipIDs.add(shipInfo.getShipID());
+                worldController.amazonController.sendTruckArrive(shipInfo.getTruckID(), shipInfo.getWhID(), shipIDs);
             }
             catch (IOException e) {
                 System.out.println("sending ack of response of pick IO: " + e.getMessage());

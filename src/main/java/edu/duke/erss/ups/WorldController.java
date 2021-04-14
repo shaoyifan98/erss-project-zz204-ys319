@@ -2,6 +2,9 @@ package edu.duke.erss.ups;
 
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.CodedOutputStream;
+import edu.duke.erss.ups.dao.TrackingShipDao;
+import edu.duke.erss.ups.entity.ShipInfo;
+import edu.duke.erss.ups.entity.ShipStatus;
 import edu.duke.erss.ups.proto.UPStoWorld.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,17 +16,15 @@ import java.util.HashMap;
 import java.util.Random;
 
 @Component
-public class WorldController{
+public class WorldController {
     private final String HOST = "67.159.88.254";
     private final int PORT = 12345;
     private final Socket connection;
     private static long seq;
-
     public long worldID;
 
     HashMap<Long, WorldCommandHandler> seqHandlerMap;
-
-    @Autowired
+    TrackingShipDao trackingShipDao;
     AmazonController amazonController;
 
     ArrayList<Long> truckIDList;
@@ -31,15 +32,26 @@ public class WorldController{
     private static final int TRUCK_X = 1;
     private static final int TRUCK_Y = 1;
 
-    WorldController() throws IOException {
+    @Autowired
+    WorldController(TrackingShipDao trackingShipDao, AmazonController amazonController) throws IOException {
         System.out.println("Starting world controller...");
         this.connection = new Socket(HOST, PORT);
         this.truckIDList = new ArrayList<>();
         this.seqHandlerMap = new HashMap<>();
+        this.trackingShipDao = trackingShipDao;
+        this.amazonController = amazonController;
         seq = 0;
         initialize();
+//        testDB();
     }
 
+    void testDB() {
+        ShipInfo shipInfo = new ShipInfo();
+        shipInfo.setShipID(2l);
+        shipInfo.setStatus("Testing...");
+        trackingShipDao.insertNewTracking(shipInfo);
+        System.out.println("Generated tracking num = "+ shipInfo.getTrackingID());
+    }
     /**
      * Keep receiving responses
      */
@@ -151,15 +163,13 @@ public class WorldController{
     }
 
     public void queryWorld(int truckID, boolean goPickUp) {
-        queryWorld(truckID, goPickUp, -1);
+        queryWorld(truckID, goPickUp, null);
     }
 
-    public void queryWorld(int truckID, boolean goPickUp, int whID) {
+    public void queryWorld(int truckID, boolean goPickUp, ShipInfo shipInfo) {
         new Thread(() -> {
             try {
-                //writing
-                Long seqNum = seq++;
-                sendQuery(seqNum, truckID, goPickUp, whID, -1);
+                sendQuery(seq++, truckID, goPickUp, -1, shipInfo);
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -167,8 +177,8 @@ public class WorldController{
         }).start();
     }
 
-    void queryWorldWithSeq(long pickSeq, int truckID, boolean goPickUp, int whID) throws IOException {
-        sendQuery(seq++, truckID, goPickUp, whID, pickSeq);
+    void queryWorldWithSeq(long pickSeq, int truckID, boolean goPickUp, ShipInfo shipInfo) throws IOException {
+        sendQuery(seq++, truckID, goPickUp, pickSeq, shipInfo);
     }
 
     /**
@@ -176,10 +186,10 @@ public class WorldController{
      * @param seqNum sequence number of the command
      * @param truckID truck id
      * @param goPickUp go pick up flag
-     * @param whID warehouse id if go pick up
+     * @param shipInfo warehouse id if go pick up
      * @throws IOException
      */
-    public void sendQuery(long seqNum, int truckID, boolean goPickUp, int whID, long pickSeq) throws IOException {
+    public void sendQuery(long seqNum, int truckID, boolean goPickUp, long pickSeq, ShipInfo shipInfo) throws IOException {
         CodedOutputStream output = CodedOutputStream.newInstance(connection.getOutputStream());
         UCommands.Builder uCommandB = UCommands.newBuilder();
         UQuery.Builder uQueryB = UQuery.newBuilder();
@@ -192,7 +202,7 @@ public class WorldController{
             //putting in the map
             QueryHandler queryHandler;
             if (goPickUp) {
-                queryHandler = new QueryHandler(seqNum, truckID, this, goPickUp, whID, pickSeq);
+                queryHandler = new QueryHandler(seqNum, truckID, this, goPickUp, pickSeq, shipInfo, trackingShipDao);
             }
             else {
                 queryHandler = new QueryHandler(seqNum, truckID, this, goPickUp);
@@ -210,43 +220,45 @@ public class WorldController{
 
     /**
      * Call this to send truck to pick up
-     * @param whID warehouse to pick up
+     * @param shipInfo info about the shipment
      */
-    public void allocateAvailableTrucks(int whID) {
+    public void allocateAvailableTrucks(ShipInfo shipInfo) {
         int randId = new Random().nextInt(TRUCK_CNT);
-        queryWorld(randId, true, whID);
+        queryWorld(randId, true, shipInfo);
     }
 
     /**
      * Call this to send truck to pick up
-     * @param whID warehouse to pick up
+     * @param seqNum
+     * @param shipInfo
+     * @throws IOException
      */
-    public void allocateAvailableTrucks(long seqNum, int whID) throws IOException {
+    public void allocateAvailableTrucks(long seqNum, ShipInfo shipInfo) throws IOException {
         int randId = new Random().nextInt(TRUCK_CNT);
-        queryWorldWithSeq(seqNum, randId, true, whID);
+        queryWorldWithSeq(seqNum, randId, true, shipInfo);
     }
 
     /**
      * Send pick up instructions
      * Note: call this only after making sure truck is available
      * @param truckID truck id
-     * @param whID warehouse id
+     * @param shipInfo warehouse id
      * @throws IOException
      */
-    public void pickUp(int truckID, int whID) throws IOException {
+    public void pickUp(int truckID, ShipInfo shipInfo) throws IOException {
         long seqNum = seq++;
-        pickUp(seqNum, truckID, whID);
+        pickUp(seqNum, truckID, shipInfo);
     }
 
-    public void pickUp(long seqNum, int truckID, int whID) throws IOException {
+    public void pickUp(long seqNum, int truckID, ShipInfo shipInfo) throws IOException {
         CodedOutputStream output = CodedOutputStream.newInstance(connection.getOutputStream());
         UCommands.Builder uCommandB = UCommands.newBuilder();
         UGoPickup.Builder uGoPickB = UGoPickup.newBuilder();
-        uGoPickB.setSeqnum(seqNum).setTruckid(truckID).setWhid(whID);
+        uGoPickB.setSeqnum(seqNum).setTruckid(truckID).setWhid(shipInfo.getWhID());
         uCommandB.addPickups(uGoPickB.build());
         if (!seqHandlerMap.containsKey(seqNum)) {
             //putting in the map
-            PickUpHandler pickUpHandler = new PickUpHandler(seqNum, truckID, whID, this);
+            PickUpHandler pickUpHandler = new PickUpHandler(seqNum, truckID, shipInfo, this, trackingShipDao);
             pickUpHandler.setTimerAndTask();
             seqHandlerMap.put(seqNum, pickUpHandler);
         }
@@ -257,16 +269,22 @@ public class WorldController{
         output.flush();
     }
 
-    public void goDeliver(int truckID, ArrayList<UDeliveryLocation> locations) throws IOException {
+    public void goDeliver(ShipInfo shipInfo) throws IOException {
         CodedOutputStream output = CodedOutputStream.newInstance(connection.getOutputStream());
         UCommands.Builder uCommandB = UCommands.newBuilder();
         UGoDeliver.Builder uGoDeliverB = UGoDeliver.newBuilder();
+        // Build the location
+        ArrayList<UDeliveryLocation> locations = new ArrayList<>();
+        UDeliveryLocation.Builder locationB = UDeliveryLocation.newBuilder();
+        locationB.setX(shipInfo.getDestX()).setY(shipInfo.getDestY()).setPackageid(shipInfo.getTrackingID());
+        locations.add(locationB.build());
         long seqNum = seq++;
+        // Build command
         uGoDeliverB.setSeqnum(seqNum).addAllPackages(locations);
         uCommandB.addDeliveries(uGoDeliverB.build());
         if (!seqHandlerMap.containsKey(seqNum)) {
             //putting in the map
-            DeliveryHandler deliveryHandler = new DeliveryHandler(seqNum, truckID, this);
+            DeliveryHandler deliveryHandler = new DeliveryHandler(seqNum,this, shipInfo, trackingShipDao);
             deliveryHandler.addLocations(locations);
             deliveryHandler.setTimerAndTask();
             seqHandlerMap.put(seqNum, deliveryHandler);
@@ -276,6 +294,9 @@ public class WorldController{
         output.writeUInt32NoTag(data.length);
         commands.writeTo(output);
         output.flush();
+        // Update DB
+        shipInfo.setStatus(ShipStatus.DELIVERING.getText());
+        trackingShipDao.updateTracking(shipInfo);
     }
 
     public void sendAckCommand(long ack) throws IOException {
