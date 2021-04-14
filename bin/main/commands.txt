@@ -1,0 +1,4 @@
+protoc -I=${ABS_PATH}/proj/src/main/resources --java_out=src/main/java/ xxx.proto
+
+protoc -I=/Users/zif3eng/Documents/Courses/568\ Robust\ Server/finalProj/proj/src/main/resources --java_out=src/main/java/ withAmazon.proto
+protoc -I=/Users/zif3eng/Documents/Courses/568\ Robust\ Server/finalProj/proj/src/main/resources --java_out=src/main/java/ world_ups.proto
