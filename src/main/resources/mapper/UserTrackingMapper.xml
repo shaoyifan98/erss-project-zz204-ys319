@@ -13,4 +13,8 @@
         FROM user_tracking_tb
         WHERE user_id=#{userID};
     </select>
+    <insert id="insertTracking">
+        INSERT INTO user_tracking_tb (user_id,tracking_id)
+        values (#{userID},#{trackingID});
+    </insert>
 </mapper>
