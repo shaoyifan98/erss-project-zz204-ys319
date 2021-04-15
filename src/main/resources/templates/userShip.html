@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>login</title>
+    <title>Your Shipment</title>
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -56,36 +56,14 @@
 
     <div class="main">
         <div >
-            <a display = "inline-block" class = "login_btn" type="button" th:href="@{/login}" >Login</a>
-            <a display = "inline-block" class = "login_btn" type="button" th:href="@{/logout}" >Logout</a>
-            <a display = "inline-block" class = "login_btn" type="button" th:href="@{/userDetail}" >View my packages</a>
+            <a display = "inline-block" class = "login_btn" type="button" th:href="@{/}" >MainPage</a>  
         </div>
        
-        <h1 class="title">UPS </h1>
-        <div class="wrap">
-           
-            <div class="form-group">
-                <form action="#" th:action="@{/search}" th:object="${search}"  method="post">
-                    <div class="form-group">
-                        <label class="info_lb">Tracking ID</label>
-                        <input  name="tracking_id"  placeholder="Please enter the tracking id" class="form-control" type="text" th:field="*{trackingID}" required>
-                        <button  type="submit" class="btn btn-secondary" name="search" id="search">
-                        Search
-                        </button>
-                    </div>
-
-                </form>
-            </div>
-
-            <div th:if="${message}">
-                <p class = "message" th:text="${message}"></p>
-            </div>
-
-        </div>
-
+        <h1 class="title">Your Shipment </h1>
+        
         <div>
             <table class="table table-striped">
-                <caption>Search Results</caption>
+                <caption>Results</caption>
                 <thead>
                     <tr>
                         <th>Tracking ID</th>
@@ -103,7 +81,6 @@
                        <td th:text="'(' + ${result.destX} + ' ,' + ${result.destY} + ')'"></td>
                        <td th:text="${result.status}"></td>
                     </tr>
-
                 </tbody>
             </table>
         </div>
