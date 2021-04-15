@@ -11,4 +11,8 @@ public interface UserDao {
     List<User> getAllUser();
 
     List<User> getUserByName(@Param("username") String username);
+
+    void insertUser(@Param("user") User user);
+
+    
 }

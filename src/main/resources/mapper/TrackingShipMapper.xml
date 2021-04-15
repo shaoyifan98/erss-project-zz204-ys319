@@ -28,9 +28,26 @@
             dest_y=#{shipInfo.destY}
         where tracking_id=#{shipInfo.trackingID};
     </update>
+
     <select id="getShipInfoByShipID" resultMap="shipInfoList">
         SELECT *
         FROM tracking_ship_tb
         WHERE ship_id=#{shipID};
     </select>
+
+    <select id="getShipInfoByTrackingID" resultMap="shipInfoList">
+        SELECT *
+        FROM tracking_ship_tb
+        WHERE tracking_id=#{trackingID};
+    </select>
+
+    <select id="getShipInfoByUserID" resultMap="shipInfoList">
+        SELECT *
+        FROM tracking_ship_tb
+        WHERE tracking_id IN 
+        (SELECT tracking_id
+        FROM user_tracking_tb
+        WHERE user_id=#{userID});
+    </select>
+
 </mapper>

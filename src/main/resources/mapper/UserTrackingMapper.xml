@@ -17,4 +17,6 @@
         INSERT INTO user_tracking_tb (user_id,tracking_id)
         values (#{userID},#{trackingID});
     </insert>
+
+    
 </mapper>

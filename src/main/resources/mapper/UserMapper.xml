@@ -3,17 +3,23 @@
 <mapper namespace="edu.duke.erss.ups.dao.UserDao">
 
     <resultMap id="userList" type="edu.duke.erss.ups.entity.User">
-        <result column="id" property="id" />
-        <result column="name" property="name" />
-        <result column="password" property="password" />
+        <result column="user_id" property="id" />
+        <result column="username" property="name" />
+        <result column="passwd" property="password" />
     </resultMap>
 
     <select id="getAll" resultMap="userList">
         SELECT * FROM USER_TB;
     </select>
-    <select id="getUserByName" resultMap="userList">
+    <select id="getUserByName" resultMap="userList" >
         SELECT *
         FROM USER_TB
         WHERE username=#{username};
     </select>
+
+    <insert id="insertUser" parameterType="edu.duke.erss.ups.entity.User"
+            useGeneratedKeys="true" keyColumn="user_id" keyProperty="user.id">
+        insert into user_tb (username, passwd)
+        values (#{user.name},#{user.password});
+    </insert>
 </mapper>
