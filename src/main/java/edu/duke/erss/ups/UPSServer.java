@@ -5,6 +5,7 @@ import com.google.protobuf.CodedOutputStream;
 import edu.duke.erss.ups.dao.TrackingShipDao;
 import edu.duke.erss.ups.dao.UserDao;
 import edu.duke.erss.ups.dao.UserTrackingDao;
+import edu.duke.erss.ups.entity.Product;
 import edu.duke.erss.ups.entity.ShipInfo;
 import edu.duke.erss.ups.entity.ShipStatus;
 import edu.duke.erss.ups.entity.User;
@@ -61,8 +62,9 @@ public class UPSServer {
             shipInfo.setDestX(pick.getX());
             shipInfo.setDestY(pick.getY());
 
+            // insert new tracking
             trackingShipDao.insertNewTracking(shipInfo); // update db
-            // TODO associate with user_account
+            // associate with user_account
             associateWithAccount(pick, shipInfo);
             // TODO save to product table
             storeProductInfo(pick);
@@ -87,7 +89,10 @@ public class UPSServer {
     }
 
     void storeProductInfo(AmazonPick pick) {
-
+        Product product = new Product();
+        product.setShipID(pick.getShipid());
+//        product.setDescription(pick.);
+        //TODO iterate product list
     }
 
     void handlerLoaded(List<AmazonLoaded> loadeds, Socket socket) throws IOException {
