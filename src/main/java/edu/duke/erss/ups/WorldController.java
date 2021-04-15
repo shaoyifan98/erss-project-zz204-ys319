@@ -37,14 +37,18 @@ public class WorldController {
     private static final int TRUCK_Y = 1;
 
     @Autowired
-    WorldController(TrackingShipDao trackingShipDao, AmazonController amazonController) throws IOException {
+    public void setAmazonController(AmazonController amazonController) {
+        this.amazonController = amazonController;
+    }
+
+    @Autowired
+    WorldController(TrackingShipDao trackingShipDao) throws IOException {
         System.out.println("Starting world controller...");
         this.worldIDAmazonConnectBa = new CyclicBarrier(2);
         this.connection = new Socket(HOST, PORT);
         this.truckIDList = new ArrayList<>();
         this.seqHandlerMap = new HashMap<>();
         this.trackingShipDao = trackingShipDao;
-        this.amazonController = amazonController;
         seq = 0;
         initialize();
 //        testDB();

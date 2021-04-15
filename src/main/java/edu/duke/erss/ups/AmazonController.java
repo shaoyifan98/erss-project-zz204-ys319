@@ -22,11 +22,15 @@ public class AmazonController {
 
     WorldController worldController;
 
-    @Autowired
-    AmazonController(WorldController worldController) {
+    AmazonController() {
         seqNum = new AtomicLong(0);
-        this.worldController = worldController;
         this.seqHandlerMap = new HashMap<>();
+    }
+
+    // setter DI
+    @Autowired
+    public void setWorldController(WorldController worldController) {
+        this.worldController = worldController;
     }
 
     /**
