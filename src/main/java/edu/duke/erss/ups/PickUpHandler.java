@@ -6,9 +6,6 @@ import edu.duke.erss.ups.entity.ShipStatus;
 import edu.duke.erss.ups.entity.Truck;
 import edu.duke.erss.ups.proto.UPStoWorld.UFinished;
 import edu.duke.erss.ups.proto.UPStoWorld.UResponses;
-import edu.duke.erss.ups.proto.UPStoWorld.UTruck;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;

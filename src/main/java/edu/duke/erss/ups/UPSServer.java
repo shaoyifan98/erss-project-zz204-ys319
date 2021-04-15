@@ -2,6 +2,7 @@ package edu.duke.erss.ups;
 
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.CodedOutputStream;
+import edu.duke.erss.ups.dao.ProductDao;
 import edu.duke.erss.ups.dao.TrackingShipDao;
 import edu.duke.erss.ups.dao.UserDao;
 import edu.duke.erss.ups.dao.UserTrackingDao;
@@ -17,8 +18,8 @@ import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
 
 @Service
 public class UPSServer {
@@ -28,51 +29,86 @@ public class UPSServer {
     private TrackingShipDao trackingShipDao;
     private UserTrackingDao userTrackingDao;
     private UserDao userDao;
+    private ProductDao productDao;
+    private Socket amazonSocket;
 
     @Autowired
     UPSServer(AmazonController amazonController, WorldController worldController, TrackingShipDao trackingShipDao,
-              UserDao userDao, UserTrackingDao userTrackingDao) throws IOException {
+              UserDao userDao, UserTrackingDao userTrackingDao, ProductDao productDao) throws IOException {
         this.serverSocket = new ServerSocket(12350, 100);
         this.amazonController = amazonController;
         this.worldController = worldController;
         this.trackingShipDao = trackingShipDao;
         this.userDao = userDao;
         this.userTrackingDao = userTrackingDao;
+        this.productDao = productDao;
         System.out.println("Start running server ... ");
         listen();
     }
 
+    /**
+     * Handling receiving messages happen in a separate thread
+     * @param socket
+     * @throws IOException
+     */
     void handle(Socket socket) throws IOException {
         System.out.println("Start handling request from " + socket.getInetAddress());
-
         CodedInputStream input = CodedInputStream.newInstance(socket.getInputStream());
-        int size = input.readUInt32();
-        int limit = input.pushLimit(size);
-        UACommands uaCommands = UACommands.parseFrom(input);
-        handlePickUp(uaCommands.getPickList(), socket);
-        handlerLoaded(uaCommands.getLoadList(), socket);
+        try {
+            worldController.worldIDAmazonConnectBa.await();
+        } catch (InterruptedException | BrokenBarrierException e) {
+            e.printStackTrace();
+        }
+        amazonController.sendWorld(WorldController.worldID, socket);
+        while (true) {
+            int size = input.readUInt32();
+            int limit = input.pushLimit(size);
+            UACommands uaCommands = UACommands.parseFrom(input);
+            input.popLimit(limit);
+            handleAcks(uaCommands.getAcksList());
+            handlePickUp(uaCommands.getPickList());
+            handlerLoaded(uaCommands.getLoadList());
+        }
     }
 
-    void handlePickUp(List<AmazonPick> pickUps, Socket socket) throws IOException {
-        for (AmazonPick pick : pickUps) {
-            ShipInfo shipInfo = new ShipInfo();
-            shipInfo.setShipID(pick.getShipid());
-            shipInfo.setStatus(ShipStatus.CREATED.getText());
-            shipInfo.setWhID(pick.getWhnum());
-            shipInfo.setDestX(pick.getX());
-            shipInfo.setDestY(pick.getY());
+    void handleAcks(List<Long> acks) {
+        new Thread(() -> {
+            for (long ack : acks) {
+                if (amazonController.seqHandlerMap.containsKey(ack)) {
+                    AmazonCommandHandler commandHandler = amazonController.seqHandlerMap.get(ack);
+                    commandHandler.onReceive();
+                    amazonController.seqHandlerMap.remove(ack);
+                }
+            }
+        }).start();
+    }
 
-            // insert new tracking
-            trackingShipDao.insertNewTracking(shipInfo); // update db
-            // associate with user_account
-            associateWithAccount(pick, shipInfo);
-            // TODO save to product table
-            storeProductInfo(pick);
+    void handlePickUp(List<AmazonPick> pickUps) throws IOException {
+        new Thread(() -> {
+            try {
+                for (AmazonPick pick : pickUps) {
+                    ShipInfo shipInfo = new ShipInfo();
+                    shipInfo.setShipID(pick.getShipid());
+                    shipInfo.setStatus(ShipStatus.CREATED.getText());
+                    shipInfo.setWhID(pick.getWhnum());
+                    shipInfo.setDestX(pick.getX());
+                    shipInfo.setDestY(pick.getY());
 
+                    // insert new tracking
+                    trackingShipDao.insertNewTracking(shipInfo); // update db
+                    // associate with user_account
+                    associateWithAccount(pick, shipInfo);
+                    // save to product table
+                    storeProductInfo(pick);
 
-            sendAck(socket, pick.getSeq()); // send back to amazon
-            worldController.allocateAvailableTrucks(shipInfo); // get to the world
-        }
+                    sendAck(pick.getSeq()); // send back to amazon
+                    worldController.allocateAvailableTrucks(shipInfo); // get to the world
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     void associateWithAccount(AmazonPick pick, ShipInfo shipInfo) {
@@ -91,21 +127,27 @@ public class UPSServer {
     void storeProductInfo(AmazonPick pick) {
         Product product = new Product();
         product.setShipID(pick.getShipid());
-//        product.setDescription(pick.);
-        //TODO iterate product list
+        //iterate product list
+        for (UAProduct uaProduct : pick.getThingsList()) {
+            product.setPid(uaProduct.getId());
+            product.setName(uaProduct.getName());
+            product.setCount(uaProduct.getCount());
+            product.setDescription(uaProduct.getDescription());
+            productDao.insertNewProduct(product);
+        }
     }
 
-    void handlerLoaded(List<AmazonLoaded> loadeds, Socket socket) throws IOException {
+    void handlerLoaded(List<AmazonLoaded> loadeds) throws IOException {
         for (AmazonLoaded loaded : loadeds) {
             ShipInfo shipInfo = trackingShipDao.getShipInfoByShipID(loaded.getShipid()).get(0);
-            sendAck(socket, loaded.getSeq()); // send back to amazon
+            sendAck(loaded.getSeq()); // send back to amazon
 
             worldController.goDeliver(shipInfo);
         }
     }
 
-    void sendAck(Socket socket, long ack) throws IOException {
-        CodedOutputStream output = CodedOutputStream.newInstance(socket.getOutputStream());
+    void sendAck(long ack) throws IOException {
+        CodedOutputStream output = CodedOutputStream.newInstance(amazonSocket.getOutputStream());
         UAResponses.Builder uaResponse = UAResponses.newBuilder();
         uaResponse.addAcks(ack);
         UAResponses responses = uaResponse.build();
@@ -117,14 +159,11 @@ public class UPSServer {
 
     void listen() throws IOException {
         new Thread(() -> {
-            while (true) {
-                Socket client = null;
-                try {
-                    client = serverSocket.accept();
-                    handle(client);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            try {
+                amazonSocket = serverSocket.accept();
+                handle(amazonSocket);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }).start();
     }

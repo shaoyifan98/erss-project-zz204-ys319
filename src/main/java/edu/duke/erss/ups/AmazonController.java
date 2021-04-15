@@ -10,26 +10,23 @@ import org.springframework.stereotype.Component;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 public class AmazonController {
-    private String host;
-    private int port;
     private static AtomicLong seqNum;
     private final int TIME_OUT = 10 * 1000;
+    private Socket amazonSocket;
+    HashMap<Long, AmazonCommandHandler> seqHandlerMap;
 
-    @Autowired
     WorldController worldController;
 
-    AmazonController() {
-        this("127.0.0.1", 12348);
-    }
-
-    AmazonController(String host, int port) {
-        this.host = host;
-        this.port = port;
+    @Autowired
+    AmazonController(WorldController worldController) {
         seqNum = new AtomicLong(0);
+        this.worldController = worldController;
+        this.seqHandlerMap = new HashMap<>();
     }
 
     /**
@@ -37,19 +34,10 @@ public class AmazonController {
      * @param worldID world id
      * @throws IOException
      */
-    public void sendWorld(long worldID) throws IOException {
-        Socket socket;
-        try {
-            socket = new Socket(host, port);
-            socket.setSoTimeout(TIME_OUT);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-
+    public void sendWorld(long worldID, Socket socket) throws IOException {
         //writing
-        CodedOutputStream output = CodedOutputStream.newInstance(socket.getOutputStream());
+        this.amazonSocket = socket;
+        CodedOutputStream output = CodedOutputStream.newInstance(amazonSocket.getOutputStream());
         UAConnect.Builder uaConnectBuilder = UAConnect.newBuilder();
         uaConnectBuilder.setWorldid(worldID);
         UAConnect uaConnect = uaConnectBuilder.build();
@@ -57,9 +45,6 @@ public class AmazonController {
         output.writeUInt32NoTag(data.length);
         uaConnect.writeTo(output);
         output.flush();
-
-        //no reading?
-        socket.close();
     }
 
     /**
@@ -71,10 +56,8 @@ public class AmazonController {
     public void sendTruckArrive(int truckID, int whID, ArrayList<Long> shipIDs) {
         new Thread(() -> {
             try {
-                Socket socket = new Socket(host, port);
-                socket.setSoTimeout(TIME_OUT);
                 //writing
-                CodedOutputStream output = CodedOutputStream.newInstance(socket.getOutputStream());
+                CodedOutputStream output = CodedOutputStream.newInstance(amazonSocket.getOutputStream());
                 UAResponses.Builder uaResponse = UAResponses.newBuilder();
                 UPSTruckArrive.Builder uaTruckArrive = UPSTruckArrive.newBuilder();
                 long seq = seqNum.getAndAdd(1);
@@ -82,9 +65,12 @@ public class AmazonController {
                 uaTruckArrive.addAllShipid(shipIDs);
                 uaResponse.addArrive(uaTruckArrive);
                 UAResponses responses = uaResponse.build();
-                sendResponse(output, responses);
 
-                handleAck(socket, seq);
+                AmazonCommandHandler commandHandler = new TruckArriveHandler(this, truckID, whID, shipIDs);
+                seqHandlerMap.put(seq, commandHandler);
+                commandHandler.setTimerAndTask();
+
+                sendResponse(output, responses);
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -95,10 +81,8 @@ public class AmazonController {
     public void sendPackageDelivered(ShipInfo shipInfo) {
         new Thread(() -> {
             try {
-                Socket socket = new Socket(host, port);
-                socket.setSoTimeout(TIME_OUT);
                 //writing
-                CodedOutputStream output = CodedOutputStream.newInstance(socket.getOutputStream());
+                CodedOutputStream output = CodedOutputStream.newInstance(amazonSocket.getOutputStream());
                 UAResponses.Builder uaResponseB = UAResponses.newBuilder();
                 UPSDelivered.Builder uDeliverB = UPSDelivered.newBuilder();
                 long seq = seqNum.getAndAdd(1);
@@ -106,9 +90,14 @@ public class AmazonController {
                 uDeliverB.setShipid(shipInfo.getShipID());
                 uaResponseB.addDeliver(uDeliverB.build());
                 UAResponses responses = uaResponseB.build();
+
+                AmazonCommandHandler commandHandler = new PackageDeliveredHandler(this, shipInfo);
+                seqHandlerMap.put(seq, commandHandler);
+                commandHandler.setTimerAndTask();
+
                 sendResponse(output, responses);
 
-                handleAck(socket, seq);
+//                handleAck(socket, seq);
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -131,7 +120,6 @@ public class AmazonController {
         UACommands uaCommands = UACommands.parseFrom(input);
         long ack = uaCommands.getAcks(0);
         input.popLimit(limit);
-        socket.close();
         if (ack != seq) {
             throw new RuntimeException("Receive mismatched seq and ack :(" + seq + "," + ack + ")");
         }

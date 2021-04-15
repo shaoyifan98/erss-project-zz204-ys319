@@ -17,6 +17,7 @@ private static final long serialVersionUID = 0L;
   }
   private AmazonPick() {
     upsAccount_ = "";
+    things_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -48,6 +49,10 @@ private static final long serialVersionUID = 0L;
   public static final int SHIPID_FIELD_NUMBER = 1;
   private long shipid_;
   /**
+   * <pre>
+   * package id / order id
+   * </pre>
+   *
    * <code>required int64 shipid = 1;</code>
    * @return Whether the shipid field is set.
    */
@@ -56,6 +61,10 @@ private static final long serialVersionUID = 0L;
     return ((bitField0_ & 0x00000001) != 0);
   }
   /**
+   * <pre>
+   * package id / order id
+   * </pre>
+   *
    * <code>required int64 shipid = 1;</code>
    * @return The shipid.
    */
@@ -67,6 +76,10 @@ private static final long serialVersionUID = 0L;
   public static final int X_FIELD_NUMBER = 2;
   private int x_;
   /**
+   * <pre>
+   * destination x
+   * </pre>
+   *
    * <code>required int32 x = 2;</code>
    * @return Whether the x field is set.
    */
@@ -75,6 +88,10 @@ private static final long serialVersionUID = 0L;
     return ((bitField0_ & 0x00000002) != 0);
   }
   /**
+   * <pre>
+   * destination x
+   * </pre>
+   *
    * <code>required int32 x = 2;</code>
    * @return The x.
    */
@@ -86,6 +103,10 @@ private static final long serialVersionUID = 0L;
   public static final int Y_FIELD_NUMBER = 3;
   private int y_;
   /**
+   * <pre>
+   * destination y
+   * </pre>
+   *
    * <code>required int32 y = 3;</code>
    * @return Whether the y field is set.
    */
@@ -94,6 +115,10 @@ private static final long serialVersionUID = 0L;
     return ((bitField0_ & 0x00000004) != 0);
   }
   /**
+   * <pre>
+   * destination y
+   * </pre>
+   *
    * <code>required int32 y = 3;</code>
    * @return The y.
    */
@@ -105,6 +130,10 @@ private static final long serialVersionUID = 0L;
   public static final int WHNUM_FIELD_NUMBER = 4;
   private int whnum_;
   /**
+   * <pre>
+   * warehouse id
+   * </pre>
+   *
    * <code>required int32 whnum = 4;</code>
    * @return Whether the whnum field is set.
    */
@@ -113,6 +142,10 @@ private static final long serialVersionUID = 0L;
     return ((bitField0_ & 0x00000008) != 0);
   }
   /**
+   * <pre>
+   * warehouse id
+   * </pre>
+   *
    * <code>required int32 whnum = 4;</code>
    * @return The whnum.
    */
@@ -186,6 +219,84 @@ private static final long serialVersionUID = 0L;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
+  }
+
+  public static final int WHX_FIELD_NUMBER = 7;
+  private int whx_;
+  /**
+   * <code>required int32 whx = 7;</code>
+   * @return Whether the whx field is set.
+   */
+  @java.lang.Override
+  public boolean hasWhx() {
+    return ((bitField0_ & 0x00000040) != 0);
+  }
+  /**
+   * <code>required int32 whx = 7;</code>
+   * @return The whx.
+   */
+  @java.lang.Override
+  public int getWhx() {
+    return whx_;
+  }
+
+  public static final int WHY_FIELD_NUMBER = 8;
+  private int why_;
+  /**
+   * <code>required int32 why = 8;</code>
+   * @return Whether the why field is set.
+   */
+  @java.lang.Override
+  public boolean hasWhy() {
+    return ((bitField0_ & 0x00000080) != 0);
+  }
+  /**
+   * <code>required int32 why = 8;</code>
+   * @return The why.
+   */
+  @java.lang.Override
+  public int getWhy() {
+    return why_;
+  }
+
+  public static final int THINGS_FIELD_NUMBER = 9;
+  private java.util.List<edu.duke.erss.ups.proto.UPStoAmazon.UAProduct> things_;
+  /**
+   * <code>repeated .tutorial.UAProduct things = 9;</code>
+   */
+  @java.lang.Override
+  public java.util.List<edu.duke.erss.ups.proto.UPStoAmazon.UAProduct> getThingsList() {
+    return things_;
+  }
+  /**
+   * <code>repeated .tutorial.UAProduct things = 9;</code>
+   */
+  @java.lang.Override
+  public java.util.List<? extends edu.duke.erss.ups.proto.UPStoAmazon.UAProductOrBuilder> 
+      getThingsOrBuilderList() {
+    return things_;
+  }
+  /**
+   * <code>repeated .tutorial.UAProduct things = 9;</code>
+   */
+  @java.lang.Override
+  public int getThingsCount() {
+    return things_.size();
+  }
+  /**
+   * <code>repeated .tutorial.UAProduct things = 9;</code>
+   */
+  @java.lang.Override
+  public edu.duke.erss.ups.proto.UPStoAmazon.UAProduct getThings(int index) {
+    return things_.get(index);
+  }
+  /**
+   * <code>repeated .tutorial.UAProduct things = 9;</code>
+   */
+  @java.lang.Override
+  public edu.duke.erss.ups.proto.UPStoAmazon.UAProductOrBuilder getThingsOrBuilder(
+      int index) {
+    return things_.get(index);
   }
 
   public static edu.duke.erss.ups.proto.UPStoAmazon.AmazonPick parseFrom(
@@ -311,6 +422,7 @@ private static final long serialVersionUID = 0L;
     private void maybeForceBuilderInitialization() {
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
+        getThingsFieldBuilder();
       }
     }
     @java.lang.Override
@@ -328,6 +440,16 @@ private static final long serialVersionUID = 0L;
       bitField0_ = (bitField0_ & ~0x00000010);
       upsAccount_ = "";
       bitField0_ = (bitField0_ & ~0x00000020);
+      whx_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000040);
+      why_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000080);
+      if (thingsBuilder_ == null) {
+        things_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000100);
+      } else {
+        thingsBuilder_.clear();
+      }
       return this;
     }
 
@@ -380,6 +502,23 @@ private static final long serialVersionUID = 0L;
         to_bitField0_ |= 0x00000020;
       }
       result.upsAccount_ = upsAccount_;
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.whx_ = whx_;
+        to_bitField0_ |= 0x00000040;
+      }
+      if (((from_bitField0_ & 0x00000080) != 0)) {
+        result.why_ = why_;
+        to_bitField0_ |= 0x00000080;
+      }
+      if (thingsBuilder_ == null) {
+        if (((bitField0_ & 0x00000100) != 0)) {
+          things_ = java.util.Collections.unmodifiableList(things_);
+          bitField0_ = (bitField0_ & ~0x00000100);
+        }
+        result.things_ = things_;
+      } else {
+        result.things_ = thingsBuilder_.build();
+      }
       result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
@@ -421,6 +560,10 @@ private static final long serialVersionUID = 0L;
 
     private long shipid_ ;
     /**
+     * <pre>
+     * package id / order id
+     * </pre>
+     *
      * <code>required int64 shipid = 1;</code>
      * @return Whether the shipid field is set.
      */
@@ -429,6 +572,10 @@ private static final long serialVersionUID = 0L;
       return ((bitField0_ & 0x00000001) != 0);
     }
     /**
+     * <pre>
+     * package id / order id
+     * </pre>
+     *
      * <code>required int64 shipid = 1;</code>
      * @return The shipid.
      */
@@ -437,6 +584,10 @@ private static final long serialVersionUID = 0L;
       return shipid_;
     }
     /**
+     * <pre>
+     * package id / order id
+     * </pre>
+     *
      * <code>required int64 shipid = 1;</code>
      * @param value The shipid to set.
      * @return This builder for chaining.
@@ -448,6 +599,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * package id / order id
+     * </pre>
+     *
      * <code>required int64 shipid = 1;</code>
      * @return This builder for chaining.
      */
@@ -460,6 +615,10 @@ private static final long serialVersionUID = 0L;
 
     private int x_ ;
     /**
+     * <pre>
+     * destination x
+     * </pre>
+     *
      * <code>required int32 x = 2;</code>
      * @return Whether the x field is set.
      */
@@ -468,6 +627,10 @@ private static final long serialVersionUID = 0L;
       return ((bitField0_ & 0x00000002) != 0);
     }
     /**
+     * <pre>
+     * destination x
+     * </pre>
+     *
      * <code>required int32 x = 2;</code>
      * @return The x.
      */
@@ -476,6 +639,10 @@ private static final long serialVersionUID = 0L;
       return x_;
     }
     /**
+     * <pre>
+     * destination x
+     * </pre>
+     *
      * <code>required int32 x = 2;</code>
      * @param value The x to set.
      * @return This builder for chaining.
@@ -487,6 +654,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * destination x
+     * </pre>
+     *
      * <code>required int32 x = 2;</code>
      * @return This builder for chaining.
      */
@@ -499,6 +670,10 @@ private static final long serialVersionUID = 0L;
 
     private int y_ ;
     /**
+     * <pre>
+     * destination y
+     * </pre>
+     *
      * <code>required int32 y = 3;</code>
      * @return Whether the y field is set.
      */
@@ -507,6 +682,10 @@ private static final long serialVersionUID = 0L;
       return ((bitField0_ & 0x00000004) != 0);
     }
     /**
+     * <pre>
+     * destination y
+     * </pre>
+     *
      * <code>required int32 y = 3;</code>
      * @return The y.
      */
@@ -515,6 +694,10 @@ private static final long serialVersionUID = 0L;
       return y_;
     }
     /**
+     * <pre>
+     * destination y
+     * </pre>
+     *
      * <code>required int32 y = 3;</code>
      * @param value The y to set.
      * @return This builder for chaining.
@@ -526,6 +709,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * destination y
+     * </pre>
+     *
      * <code>required int32 y = 3;</code>
      * @return This builder for chaining.
      */
@@ -538,6 +725,10 @@ private static final long serialVersionUID = 0L;
 
     private int whnum_ ;
     /**
+     * <pre>
+     * warehouse id
+     * </pre>
+     *
      * <code>required int32 whnum = 4;</code>
      * @return Whether the whnum field is set.
      */
@@ -546,6 +737,10 @@ private static final long serialVersionUID = 0L;
       return ((bitField0_ & 0x00000008) != 0);
     }
     /**
+     * <pre>
+     * warehouse id
+     * </pre>
+     *
      * <code>required int32 whnum = 4;</code>
      * @return The whnum.
      */
@@ -554,6 +749,10 @@ private static final long serialVersionUID = 0L;
       return whnum_;
     }
     /**
+     * <pre>
+     * warehouse id
+     * </pre>
+     *
      * <code>required int32 whnum = 4;</code>
      * @param value The whnum to set.
      * @return This builder for chaining.
@@ -565,6 +764,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * warehouse id
+     * </pre>
+     *
      * <code>required int32 whnum = 4;</code>
      * @return This builder for chaining.
      */
@@ -696,6 +899,324 @@ private static final long serialVersionUID = 0L;
       upsAccount_ = value;
       onChanged();
       return this;
+    }
+
+    private int whx_ ;
+    /**
+     * <code>required int32 whx = 7;</code>
+     * @return Whether the whx field is set.
+     */
+    @java.lang.Override
+    public boolean hasWhx() {
+      return ((bitField0_ & 0x00000040) != 0);
+    }
+    /**
+     * <code>required int32 whx = 7;</code>
+     * @return The whx.
+     */
+    @java.lang.Override
+    public int getWhx() {
+      return whx_;
+    }
+    /**
+     * <code>required int32 whx = 7;</code>
+     * @param value The whx to set.
+     * @return This builder for chaining.
+     */
+    public Builder setWhx(int value) {
+      bitField0_ |= 0x00000040;
+      whx_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>required int32 whx = 7;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearWhx() {
+      bitField0_ = (bitField0_ & ~0x00000040);
+      whx_ = 0;
+      onChanged();
+      return this;
+    }
+
+    private int why_ ;
+    /**
+     * <code>required int32 why = 8;</code>
+     * @return Whether the why field is set.
+     */
+    @java.lang.Override
+    public boolean hasWhy() {
+      return ((bitField0_ & 0x00000080) != 0);
+    }
+    /**
+     * <code>required int32 why = 8;</code>
+     * @return The why.
+     */
+    @java.lang.Override
+    public int getWhy() {
+      return why_;
+    }
+    /**
+     * <code>required int32 why = 8;</code>
+     * @param value The why to set.
+     * @return This builder for chaining.
+     */
+    public Builder setWhy(int value) {
+      bitField0_ |= 0x00000080;
+      why_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>required int32 why = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearWhy() {
+      bitField0_ = (bitField0_ & ~0x00000080);
+      why_ = 0;
+      onChanged();
+      return this;
+    }
+
+    private java.util.List<edu.duke.erss.ups.proto.UPStoAmazon.UAProduct> things_ =
+      java.util.Collections.emptyList();
+    private void ensureThingsIsMutable() {
+      if (!((bitField0_ & 0x00000100) != 0)) {
+        things_ = new java.util.ArrayList<edu.duke.erss.ups.proto.UPStoAmazon.UAProduct>(things_);
+        bitField0_ |= 0x00000100;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        edu.duke.erss.ups.proto.UPStoAmazon.UAProduct, edu.duke.erss.ups.proto.UPStoAmazon.UAProduct.Builder, edu.duke.erss.ups.proto.UPStoAmazon.UAProductOrBuilder> thingsBuilder_;
+
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public java.util.List<edu.duke.erss.ups.proto.UPStoAmazon.UAProduct> getThingsList() {
+      if (thingsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(things_);
+      } else {
+        return thingsBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public int getThingsCount() {
+      if (thingsBuilder_ == null) {
+        return things_.size();
+      } else {
+        return thingsBuilder_.getCount();
+      }
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public edu.duke.erss.ups.proto.UPStoAmazon.UAProduct getThings(int index) {
+      if (thingsBuilder_ == null) {
+        return things_.get(index);
+      } else {
+        return thingsBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public Builder setThings(
+        int index, edu.duke.erss.ups.proto.UPStoAmazon.UAProduct value) {
+      if (thingsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureThingsIsMutable();
+        things_.set(index, value);
+        onChanged();
+      } else {
+        thingsBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public Builder setThings(
+        int index, edu.duke.erss.ups.proto.UPStoAmazon.UAProduct.Builder builderForValue) {
+      if (thingsBuilder_ == null) {
+        ensureThingsIsMutable();
+        things_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        thingsBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public Builder addThings(edu.duke.erss.ups.proto.UPStoAmazon.UAProduct value) {
+      if (thingsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureThingsIsMutable();
+        things_.add(value);
+        onChanged();
+      } else {
+        thingsBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public Builder addThings(
+        int index, edu.duke.erss.ups.proto.UPStoAmazon.UAProduct value) {
+      if (thingsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureThingsIsMutable();
+        things_.add(index, value);
+        onChanged();
+      } else {
+        thingsBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public Builder addThings(
+        edu.duke.erss.ups.proto.UPStoAmazon.UAProduct.Builder builderForValue) {
+      if (thingsBuilder_ == null) {
+        ensureThingsIsMutable();
+        things_.add(builderForValue.build());
+        onChanged();
+      } else {
+        thingsBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public Builder addThings(
+        int index, edu.duke.erss.ups.proto.UPStoAmazon.UAProduct.Builder builderForValue) {
+      if (thingsBuilder_ == null) {
+        ensureThingsIsMutable();
+        things_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        thingsBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public Builder addAllThings(
+        java.lang.Iterable<? extends edu.duke.erss.ups.proto.UPStoAmazon.UAProduct> values) {
+      if (thingsBuilder_ == null) {
+        ensureThingsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, things_);
+        onChanged();
+      } else {
+        thingsBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public Builder clearThings() {
+      if (thingsBuilder_ == null) {
+        things_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000100);
+        onChanged();
+      } else {
+        thingsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public Builder removeThings(int index) {
+      if (thingsBuilder_ == null) {
+        ensureThingsIsMutable();
+        things_.remove(index);
+        onChanged();
+      } else {
+        thingsBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public edu.duke.erss.ups.proto.UPStoAmazon.UAProduct.Builder getThingsBuilder(
+        int index) {
+      return getThingsFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public edu.duke.erss.ups.proto.UPStoAmazon.UAProductOrBuilder getThingsOrBuilder(
+        int index) {
+      if (thingsBuilder_ == null) {
+        return things_.get(index);  } else {
+        return thingsBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public java.util.List<? extends edu.duke.erss.ups.proto.UPStoAmazon.UAProductOrBuilder> 
+         getThingsOrBuilderList() {
+      if (thingsBuilder_ != null) {
+        return thingsBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(things_);
+      }
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public edu.duke.erss.ups.proto.UPStoAmazon.UAProduct.Builder addThingsBuilder() {
+      return getThingsFieldBuilder().addBuilder(
+          edu.duke.erss.ups.proto.UPStoAmazon.UAProduct.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public edu.duke.erss.ups.proto.UPStoAmazon.UAProduct.Builder addThingsBuilder(
+        int index) {
+      return getThingsFieldBuilder().addBuilder(
+          index, edu.duke.erss.ups.proto.UPStoAmazon.UAProduct.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .tutorial.UAProduct things = 9;</code>
+     */
+    public java.util.List<edu.duke.erss.ups.proto.UPStoAmazon.UAProduct.Builder> 
+         getThingsBuilderList() {
+      return getThingsFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        edu.duke.erss.ups.proto.UPStoAmazon.UAProduct, edu.duke.erss.ups.proto.UPStoAmazon.UAProduct.Builder, edu.duke.erss.ups.proto.UPStoAmazon.UAProductOrBuilder> 
+        getThingsFieldBuilder() {
+      if (thingsBuilder_ == null) {
+        thingsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+            edu.duke.erss.ups.proto.UPStoAmazon.UAProduct, edu.duke.erss.ups.proto.UPStoAmazon.UAProduct.Builder, edu.duke.erss.ups.proto.UPStoAmazon.UAProductOrBuilder>(
+                things_,
+                ((bitField0_ & 0x00000100) != 0),
+                getParentForChildren(),
+                isClean());
+        things_ = null;
+      }
+      return thingsBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

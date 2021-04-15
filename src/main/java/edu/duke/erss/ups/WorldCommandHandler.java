@@ -7,22 +7,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public abstract class WorldCommandHandler {
-
     protected final Long TIME_OUT = 1000 * 30L;
+    protected Timer timer;
+    protected TimerTask resend;
 
     WorldController worldController;
 
     Long seq;
-
     Integer truckID;
-
-    Timer timer;
-
-    TimerTask resend;
-
-    WorldCommandHandler() {
-
-    }
 
     WorldCommandHandler(long seq, int truckID, WorldController worldController) {
         this.seq = seq;

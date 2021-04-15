@@ -20,14 +20,25 @@ message UAConnect{
   required int64 worldid = 1;
 }
 
+message UAProduct{
+  required int64 id = 1;
+  required string description = 2;
+  required int32 count = 3;
+  required string name = 4;
+}
+
 message AmazonPick {
-  required int64 shipid = 1;
-  required int32 x = 2;
-  required int32 y = 3;
-  required int32 whnum = 4;
+  required int64 shipid = 1; // package id / order id
+  required int32 x = 2; // destination x
+  required int32 y = 3; // destination y
+  required int32 whnum = 4; // warehouse id
   required int64 seq = 5;
   optional string upsAccount = 6;
+  required int32 whx = 7;
+  required int32 why = 8;
+  repeated UAProduct things = 9;
 }
+
 
 message UPSTruckArrive {
   required int64 seq = 1;

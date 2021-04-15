@@ -25,6 +25,11 @@ public final class WithAmazon {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_tutorial_UAConnect_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_tutorial_UAProduct_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_tutorial_UAProduct_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_tutorial_AmazonPick_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -66,21 +71,25 @@ public final class WithAmazon {
       "\n\020withAmazon.proto\022\010tutorial\"_\n\010DateTime" +
       "\022\014\n\004year\030\001 \002(\005\022\r\n\005month\030\002 \002(\005\022\013\n\003day\030\003 \002" +
       "(\005\022\014\n\004hour\030\004 \002(\005\022\013\n\003min\030\005 \002(\005\022\016\n\006second\030" +
-      "\006 \002(\005\"\034\n\tUAConnect\022\017\n\007worldid\030\001 \002(\003\"b\n\nA" +
-      "mazonPick\022\016\n\006shipid\030\001 \002(\003\022\t\n\001x\030\002 \002(\005\022\t\n\001" +
-      "y\030\003 \002(\005\022\r\n\005whnum\030\004 \002(\005\022\013\n\003seq\030\005 \002(\003\022\022\n\nu" +
-      "psAccount\030\006 \001(\t\"b\n\016UPSTruckArrive\022\013\n\003seq" +
-      "\030\001 \002(\003\022\017\n\007truckID\030\002 \002(\005\022\r\n\005whnum\030\003 \002(\005\022\016" +
-      "\n\006shipid\030\004 \003(\003\022\023\n\013trackingNum\030\005 \003(\003\"<\n\014A" +
-      "mazonLoaded\022\016\n\006shipid\030\001 \002(\003\022\013\n\003seq\030\002 \002(\003" +
-      "\022\017\n\007truckID\030\003 \002(\005\"+\n\014UPSDelivered\022\016\n\006shi" +
-      "pid\030\001 \002(\003\022\013\n\003seq\030\002 \002(\003\"d\n\nUACommands\022\"\n\004" +
-      "pick\030\001 \003(\0132\024.tutorial.AmazonPick\022$\n\004load" +
-      "\030\002 \003(\0132\026.tutorial.AmazonLoaded\022\014\n\004acks\030\003" +
-      " \003(\003\"n\n\013UAResponses\022(\n\006arrive\030\001 \003(\0132\030.tu" +
-      "torial.UPSTruckArrive\022\'\n\007deliver\030\002 \003(\0132\026" +
-      ".tutorial.UPSDelivered\022\014\n\004acks\030\003 \003(\003B)\n#" +
-      "edu.duke.erss.ups.proto.UPStoAmazonH\002P\001"
+      "\006 \002(\005\"\034\n\tUAConnect\022\017\n\007worldid\030\001 \002(\003\"I\n\tU" +
+      "AProduct\022\n\n\002id\030\001 \002(\003\022\023\n\013description\030\002 \002(" +
+      "\t\022\r\n\005count\030\003 \002(\005\022\014\n\004name\030\004 \002(\t\"\241\001\n\nAmazo" +
+      "nPick\022\016\n\006shipid\030\001 \002(\003\022\t\n\001x\030\002 \002(\005\022\t\n\001y\030\003 " +
+      "\002(\005\022\r\n\005whnum\030\004 \002(\005\022\013\n\003seq\030\005 \002(\003\022\022\n\nupsAc" +
+      "count\030\006 \001(\t\022\013\n\003whx\030\007 \002(\005\022\013\n\003why\030\010 \002(\005\022#\n" +
+      "\006things\030\t \003(\0132\023.tutorial.UAProduct\"b\n\016UP" +
+      "STruckArrive\022\013\n\003seq\030\001 \002(\003\022\017\n\007truckID\030\002 \002" +
+      "(\005\022\r\n\005whnum\030\003 \002(\005\022\016\n\006shipid\030\004 \003(\003\022\023\n\013tra" +
+      "ckingNum\030\005 \003(\003\"<\n\014AmazonLoaded\022\016\n\006shipid" +
+      "\030\001 \002(\003\022\013\n\003seq\030\002 \002(\003\022\017\n\007truckID\030\003 \002(\005\"+\n\014" +
+      "UPSDelivered\022\016\n\006shipid\030\001 \002(\003\022\013\n\003seq\030\002 \002(" +
+      "\003\"d\n\nUACommands\022\"\n\004pick\030\001 \003(\0132\024.tutorial" +
+      ".AmazonPick\022$\n\004load\030\002 \003(\0132\026.tutorial.Ama" +
+      "zonLoaded\022\014\n\004acks\030\003 \003(\003\"n\n\013UAResponses\022(" +
+      "\n\006arrive\030\001 \003(\0132\030.tutorial.UPSTruckArrive" +
+      "\022\'\n\007deliver\030\002 \003(\0132\026.tutorial.UPSDelivere" +
+      "d\022\014\n\004acks\030\003 \003(\003B)\n#edu.duke.erss.ups.pro" +
+      "to.UPStoAmazonH\002P\001"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -98,38 +107,44 @@ public final class WithAmazon {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tutorial_UAConnect_descriptor,
         new java.lang.String[] { "Worldid", });
-    internal_static_tutorial_AmazonPick_descriptor =
+    internal_static_tutorial_UAProduct_descriptor =
       getDescriptor().getMessageTypes().get(2);
+    internal_static_tutorial_UAProduct_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_tutorial_UAProduct_descriptor,
+        new java.lang.String[] { "Id", "Description", "Count", "Name", });
+    internal_static_tutorial_AmazonPick_descriptor =
+      getDescriptor().getMessageTypes().get(3);
     internal_static_tutorial_AmazonPick_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tutorial_AmazonPick_descriptor,
-        new java.lang.String[] { "Shipid", "X", "Y", "Whnum", "Seq", "UpsAccount", });
+        new java.lang.String[] { "Shipid", "X", "Y", "Whnum", "Seq", "UpsAccount", "Whx", "Why", "Things", });
     internal_static_tutorial_UPSTruckArrive_descriptor =
-      getDescriptor().getMessageTypes().get(3);
+      getDescriptor().getMessageTypes().get(4);
     internal_static_tutorial_UPSTruckArrive_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tutorial_UPSTruckArrive_descriptor,
         new java.lang.String[] { "Seq", "TruckID", "Whnum", "Shipid", "TrackingNum", });
     internal_static_tutorial_AmazonLoaded_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(5);
     internal_static_tutorial_AmazonLoaded_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tutorial_AmazonLoaded_descriptor,
         new java.lang.String[] { "Shipid", "Seq", "TruckID", });
     internal_static_tutorial_UPSDelivered_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_tutorial_UPSDelivered_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tutorial_UPSDelivered_descriptor,
         new java.lang.String[] { "Shipid", "Seq", });
     internal_static_tutorial_UACommands_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_tutorial_UACommands_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tutorial_UACommands_descriptor,
         new java.lang.String[] { "Pick", "Load", "Acks", });
     internal_static_tutorial_UAResponses_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_tutorial_UAResponses_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tutorial_UAResponses_descriptor,

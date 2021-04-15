@@ -50,6 +50,12 @@ public class DeliveryHandler extends WorldCommandHandler {
         cancelTimer();
         new Thread(() -> {
             try {
+                if (uResponses.getErrorCount() != 0) {
+                    System.out.println("Error delivering: " + uResponses.getError(index).getErr() + ". Seq = " +
+                            uResponses.getError(index).getOriginseqnum());
+                    worldController.sendAckCommand(uResponses.getError(index).getSeqnum());
+                    return;
+                }
                 UDeliveryMade uDeliveryMade = uResponses.getDelivered(index);
                 System.out.println("Package " + uDeliveryMade.getPackageid() + " of truck " + uDeliveryMade.getTruckid() + " delivered");
                 UDeliveryLocation toDelete = null;

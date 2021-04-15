@@ -8,44 +8,76 @@ public interface AmazonPickOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
+   * <pre>
+   * package id / order id
+   * </pre>
+   *
    * <code>required int64 shipid = 1;</code>
    * @return Whether the shipid field is set.
    */
   boolean hasShipid();
   /**
+   * <pre>
+   * package id / order id
+   * </pre>
+   *
    * <code>required int64 shipid = 1;</code>
    * @return The shipid.
    */
   long getShipid();
 
   /**
+   * <pre>
+   * destination x
+   * </pre>
+   *
    * <code>required int32 x = 2;</code>
    * @return Whether the x field is set.
    */
   boolean hasX();
   /**
+   * <pre>
+   * destination x
+   * </pre>
+   *
    * <code>required int32 x = 2;</code>
    * @return The x.
    */
   int getX();
 
   /**
+   * <pre>
+   * destination y
+   * </pre>
+   *
    * <code>required int32 y = 3;</code>
    * @return Whether the y field is set.
    */
   boolean hasY();
   /**
+   * <pre>
+   * destination y
+   * </pre>
+   *
    * <code>required int32 y = 3;</code>
    * @return The y.
    */
   int getY();
 
   /**
+   * <pre>
+   * warehouse id
+   * </pre>
+   *
    * <code>required int32 whnum = 4;</code>
    * @return Whether the whnum field is set.
    */
   boolean hasWhnum();
   /**
+   * <pre>
+   * warehouse id
+   * </pre>
+   *
    * <code>required int32 whnum = 4;</code>
    * @return The whnum.
    */
@@ -78,4 +110,50 @@ public interface AmazonPickOrBuilder extends
    */
   com.google.protobuf.ByteString
       getUpsAccountBytes();
+
+  /**
+   * <code>required int32 whx = 7;</code>
+   * @return Whether the whx field is set.
+   */
+  boolean hasWhx();
+  /**
+   * <code>required int32 whx = 7;</code>
+   * @return The whx.
+   */
+  int getWhx();
+
+  /**
+   * <code>required int32 why = 8;</code>
+   * @return Whether the why field is set.
+   */
+  boolean hasWhy();
+  /**
+   * <code>required int32 why = 8;</code>
+   * @return The why.
+   */
+  int getWhy();
+
+  /**
+   * <code>repeated .tutorial.UAProduct things = 9;</code>
+   */
+  java.util.List<edu.duke.erss.ups.proto.UPStoAmazon.UAProduct> 
+      getThingsList();
+  /**
+   * <code>repeated .tutorial.UAProduct things = 9;</code>
+   */
+  edu.duke.erss.ups.proto.UPStoAmazon.UAProduct getThings(int index);
+  /**
+   * <code>repeated .tutorial.UAProduct things = 9;</code>
+   */
+  int getThingsCount();
+  /**
+   * <code>repeated .tutorial.UAProduct things = 9;</code>
+   */
+  java.util.List<? extends edu.duke.erss.ups.proto.UPStoAmazon.UAProductOrBuilder> 
+      getThingsOrBuilderList();
+  /**
+   * <code>repeated .tutorial.UAProduct things = 9;</code>
+   */
+  edu.duke.erss.ups.proto.UPStoAmazon.UAProductOrBuilder getThingsOrBuilder(
+      int index);
 }

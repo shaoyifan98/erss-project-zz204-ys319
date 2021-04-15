@@ -14,6 +14,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 @Component
 public class WorldController {
@@ -21,20 +23,23 @@ public class WorldController {
     private final int PORT = 12345;
     private final Socket connection;
     private static long seq;
-    public long worldID;
+
+    public static long worldID = -1;
+    public CyclicBarrier worldIDAmazonConnectBa;
 
     HashMap<Long, WorldCommandHandler> seqHandlerMap;
     TrackingShipDao trackingShipDao;
     AmazonController amazonController;
 
     ArrayList<Long> truckIDList;
-    private static final int TRUCK_CNT = 100;
+    private static final int TRUCK_CNT = 100000;
     private static final int TRUCK_X = 1;
     private static final int TRUCK_Y = 1;
 
     @Autowired
     WorldController(TrackingShipDao trackingShipDao, AmazonController amazonController) throws IOException {
         System.out.println("Starting world controller...");
+        this.worldIDAmazonConnectBa = new CyclicBarrier(2);
         this.connection = new Socket(HOST, PORT);
         this.truckIDList = new ArrayList<>();
         this.seqHandlerMap = new HashMap<>();
@@ -86,9 +91,21 @@ public class WorldController {
                 if (!handler.getClass().equals(DeliveryHandler.class)) {
                     seqHandlerMap.remove(ack);
                 }
-                continue;
+                continue; // skipping the loop
             }
             System.out.println("[DEBUG] ack already handled");
+            if (uResponses.getErrorCount() > 0) {
+                sendAckCommand(uResponses.getError(i).getSeqnum());
+            }
+            else if (uResponses.getCompletionsCount() > 0) {
+                sendAckCommand(uResponses.getCompletions(i).getSeqnum());
+            }
+            else if (uResponses.getDeliveredCount() > 0) {
+                sendAckCommand(uResponses.getDelivered(i).getSeqnum());
+            }
+            else if (uResponses.getTruckstatusCount() > 0) {
+                sendAckCommand(uResponses.getTruckstatus(i).getSeqnum());
+            }
         }
 
         //UFinish of a truck completion of all packages
@@ -109,12 +126,15 @@ public class WorldController {
                 sendInitialize();
                 //reading from world
                 readInitialize();
-                //send to amazon
-//                informAmazon();
+                worldIDAmazonConnectBa.await();
                 //start listen world messages
                 startListener();
             }
             catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
                 e.printStackTrace();
             }
         }).start();
@@ -152,10 +172,6 @@ public class WorldController {
         }
         System.out.println("UConnect: " + result + ", world id = " + worldID);
         input.popLimit(limit);
-    }
-
-    private void informAmazon() throws IOException {
-        amazonController.sendWorld(worldID);
     }
 
     public void queryWorld(int truckID) {
