@@ -25,7 +25,7 @@ public class LoginController {
     @PostMapping("/login")
     public ModelAndView login(@ModelAttribute User user) {
         //validate
-        ArrayList<Result> results = new ArrayList<Result>();
+        ArrayList<Result> results = new ArrayList<>();
         results.add(new Result("1", "a", "created"));
         results.add(new Result("2", "b", "created"));
         results.add(new Result("3", "c", "created"));

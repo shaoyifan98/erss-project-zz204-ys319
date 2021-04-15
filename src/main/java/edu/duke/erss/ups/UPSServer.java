@@ -32,7 +32,7 @@ public class UPSServer {
     @Autowired
     UPSServer(AmazonController amazonController, WorldController worldController, TrackingShipDao trackingShipDao,
               UserDao userDao, UserTrackingDao userTrackingDao) throws IOException {
-        serverSocket = new ServerSocket(12350, 100);
+        this.serverSocket = new ServerSocket(12350, 100);
         this.amazonController = amazonController;
         this.worldController = worldController;
         this.trackingShipDao = trackingShipDao;
