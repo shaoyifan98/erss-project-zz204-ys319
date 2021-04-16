@@ -14,9 +14,8 @@
         FROM product_tb
         WHERE ship_id=#{shipID};
     </select>
-    <insert id="insertNewProduct" parameterType="edu.duke.erss.ups.entity.Product"
-            useGeneratedKeys="true" keyColumn="pro_id" keyProperty="product.pid">
-        insert into product_tb (ship_id, name, description, cnt)
-        values (#{product.shipID}, #{product.name}, #{product.description}, #{product.count});
+    <insert id="insertNewProduct" parameterType="edu.duke.erss.ups.entity.Product">
+        insert into product_tb (pro_id, ship_id, name, description, cnt)
+        values (#{product.pid}, #{product.shipID}, #{product.name}, #{product.description}, #{product.count});
     </insert>
 </mapper>
