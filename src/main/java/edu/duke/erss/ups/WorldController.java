@@ -307,7 +307,7 @@ public class WorldController {
         locations.add(locationB.build());
         long seqNum = seq++;
         // Build command
-        uGoDeliverB.setSeqnum(seqNum).addAllPackages(locations);
+        uGoDeliverB.setSeqnum(seqNum).addAllPackages(locations).setTruckid(shipInfo.getTruckID());
         uCommandB.addDeliveries(uGoDeliverB.build());
         if (!seqHandlerMap.containsKey(seqNum)) {
             //putting in the map
