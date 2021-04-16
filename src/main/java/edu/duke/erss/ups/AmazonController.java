@@ -57,7 +57,7 @@ public class AmazonController {
      * @param whID warehouse id
      * @param shipIDs ship id / package id / order id
      */
-    public void sendTruckArrive(int truckID, int whID, ArrayList<Long> shipIDs) {
+    public void sendTruckArrive(long tracking, int truckID, int whID, ArrayList<Long> shipIDs) {
         new Thread(() -> {
             try {
                 //writing
@@ -67,6 +67,7 @@ public class AmazonController {
                 long seq = seqNum.getAndAdd(1);
                 uaTruckArrive.setSeq(seq).setTruckID(truckID).setWhnum(whID);
                 uaTruckArrive.addAllShipid(shipIDs);
+                uaTruckArrive.addTrackingNum(tracking);
                 uaResponse.addArrive(uaTruckArrive);
                 UAResponses responses = uaResponse.build();
 

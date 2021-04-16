@@ -54,7 +54,7 @@ public class PickUpHandler extends WorldCommandHandler {
                 //inform amazon to load
                 ArrayList<Long> shipIDs = new ArrayList<>();
                 shipIDs.add(shipInfo.getShipID());
-                worldController.amazonController.sendTruckArrive(shipInfo.getTruckID(), shipInfo.getWhID(), shipIDs);
+                worldController.amazonController.sendTruckArrive(shipInfo.getTrackingID(), shipInfo.getTruckID(), shipInfo.getWhID(), shipIDs);
             }
             catch (IOException e) {
                 System.out.println("sending ack of response of pick IO: " + e.getMessage());

@@ -21,7 +21,8 @@ public class TruckArriveHandler extends AmazonCommandHandler{
         resend = new TimerTask() {
             @Override
             public void run() {
-                amazonController.sendTruckArrive(truckID, whID, shipIDs);
+                //TODO : change checking
+                amazonController.sendTruckArrive(-1, truckID, whID, shipIDs);
             }
         };
         timer.schedule(resend, TIME_OUT);
