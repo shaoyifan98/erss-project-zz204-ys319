@@ -303,7 +303,7 @@ public class WorldController {
         // Build the location
         ArrayList<UDeliveryLocation> locations = new ArrayList<>();
         UDeliveryLocation.Builder locationB = UDeliveryLocation.newBuilder();
-        locationB.setX(shipInfo.getDestX()).setY(shipInfo.getDestY()).setPackageid(shipInfo.getTrackingID());
+        locationB.setX(shipInfo.getDestX()).setY(shipInfo.getDestY()).setPackageid(shipInfo.getShipID());
         locations.add(locationB.build());
         long seqNum = seq++;
         // Build command
