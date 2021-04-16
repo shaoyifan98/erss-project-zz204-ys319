@@ -6,6 +6,7 @@
         <result column="user_id" property="id" />
         <result column="username" property="name" />
         <result column="passwd" property="password" />
+        <result column="email" property="email" />
     </resultMap>
 
     <select id="getAll" resultMap="userList">
@@ -19,7 +20,7 @@
 
     <insert id="insertUser" parameterType="edu.duke.erss.ups.entity.User"
             useGeneratedKeys="true" keyColumn="user_id" keyProperty="user.id">
-        insert into user_tb (username, passwd)
-        values (#{user.name},#{user.password});
+        insert into user_tb (username, passwd, email)
+        values (#{user.name}, #{user.password}, #{user.email});
     </insert>
 </mapper>

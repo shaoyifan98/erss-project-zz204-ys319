@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.duke.erss.ups.dao.TruckDao">
+    <resultMap id="truckList" type="edu.duke.erss.ups.entity.Truck">
+        <result column="truck_id" property="id" />
+        <result column="status" property="status" />
+        <result column="pos_x" property="posX" />
+        <result column="pos_y" property="posY" />
+    </resultMap>
+
+    <select id="getAll" resultMap="truckList">
+        SELECT *
+        FROM truck_tb;
+    </select>
+    <update id="updateTruckStatus">
+        UPDATE truck_tb
+        SET status = #{status}
+        WHERE truck_id = #{truckID};
+    </update>
+    <update id="updateTruckPos">
+        UPDATE truck_tb
+        SET pos_x = #{posX},
+            pos_y = #{posY}
+        WHERE truck_id = #{truckID};
+    </update>
+    <insert id="insertTruck" parameterType="edu.duke.erss.ups.entity.Truck">
+        INSERT INTO truck_tb (truck_id, status, pos_x, pos_y)
+        VALUES (#{truck.id}, #{truck.status}, #{truck.posX}, #{truck.posY});
+    </insert>
+</mapper>

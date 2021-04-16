@@ -9,6 +9,8 @@
         <result column="status" property="status" />
         <result column="dest_x" property="destX" />
         <result column="dest_y" property="destY" />
+        <result column="comment" property="comment" />
+        <result column="distance" property="distance" />
     </resultMap>
 
     <select id="getAll" resultMap="shipInfoList">
@@ -25,7 +27,8 @@
         set truck_id=#{shipInfo.truckID},
             status=#{shipInfo.status},
             dest_x=#{shipInfo.destX},
-            dest_y=#{shipInfo.destY}
+            dest_y=#{shipInfo.destY},
+            distance=#{shipInfo.distance}
         where tracking_id=#{shipInfo.trackingID};
     </update>
 

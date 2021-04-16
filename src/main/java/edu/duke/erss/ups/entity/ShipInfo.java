@@ -5,9 +5,28 @@ public class ShipInfo {
     private Long shipID;
     private Integer truckID;
     private String status;
-    private Integer whID;
     private Integer destX;
     private Integer destY;
+    private String comment;
+    private double distance;
+
+    private Integer whID;
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
 
     public Integer getDestX() {
         return destX;

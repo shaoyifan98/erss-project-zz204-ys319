@@ -3,8 +3,10 @@ package edu.duke.erss.ups;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.CodedOutputStream;
 import edu.duke.erss.ups.dao.TrackingShipDao;
+import edu.duke.erss.ups.dao.TruckDao;
 import edu.duke.erss.ups.entity.ShipInfo;
 import edu.duke.erss.ups.entity.ShipStatus;
+import edu.duke.erss.ups.entity.Truck;
 import edu.duke.erss.ups.proto.UPStoWorld.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,10 +31,11 @@ public class WorldController {
 
     HashMap<Long, WorldCommandHandler> seqHandlerMap;
     TrackingShipDao trackingShipDao;
+    TruckDao truckDao;
     AmazonController amazonController;
 
     ArrayList<Long> truckIDList;
-    private final int TRUCK_CNT = 100000;
+    private final int TRUCK_CNT = 200;
     private final int TRUCK_X = 1;
     private final int TRUCK_Y = 1;
     private static int truck_alloc = 0;
@@ -43,25 +46,18 @@ public class WorldController {
     }
 
     @Autowired
-    WorldController(TrackingShipDao trackingShipDao) throws IOException {
+    WorldController(TrackingShipDao trackingShipDao, TruckDao truckDao) throws IOException {
         System.out.println("Starting world controller...");
         this.worldIDAmazonConnectBa = new CyclicBarrier(2);
         this.connection = new Socket(HOST, PORT);
         this.truckIDList = new ArrayList<>();
         this.seqHandlerMap = new HashMap<>();
         this.trackingShipDao = trackingShipDao;
+        this.truckDao = truckDao;
         seq = 0;
         initialize();
-//        testDB();
     }
 
-    void testDB() {
-        ShipInfo shipInfo = new ShipInfo();
-        shipInfo.setShipID(2l);
-        shipInfo.setStatus("Testing...");
-        trackingShipDao.insertNewTracking(shipInfo);
-        System.out.println("Generated tracking num = "+ shipInfo.getTrackingID());
-    }
     /**
      * Keep receiving responses
      */
@@ -153,6 +149,12 @@ public class WorldController {
             UInitTruck.Builder uInitBuilder = UInitTruck.newBuilder();
             uInitBuilder.setId(i).setX(TRUCK_X).setY(TRUCK_Y);
             uConnectBuilder.addTrucks(uInitBuilder.build());
+            Truck truck = new Truck();
+            truck.setPosX(TRUCK_X);
+            truck.setPosY(TRUCK_Y);
+            truck.setStatus(Truck.Status.IDLE.getText());
+            truck.setId(i);
+            truckDao.insertTruck(truck);
         }
         uConnectBuilder.setIsAmazon(false);
         UConnect request = uConnectBuilder.build();
