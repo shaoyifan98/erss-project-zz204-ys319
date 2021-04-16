@@ -32,9 +32,10 @@ public class WorldController {
     AmazonController amazonController;
 
     ArrayList<Long> truckIDList;
-    private static final int TRUCK_CNT = 100000;
-    private static final int TRUCK_X = 1;
-    private static final int TRUCK_Y = 1;
+    private final int TRUCK_CNT = 100000;
+    private final int TRUCK_X = 1;
+    private final int TRUCK_Y = 1;
+    private static int truck_alloc = 0;
 
     @Autowired
     public void setAmazonController(AmazonController amazonController) {
@@ -243,8 +244,11 @@ public class WorldController {
      * @param shipInfo info about the shipment
      */
     public void allocateAvailableTrucks(ShipInfo shipInfo) {
-        int randId = new Random().nextInt(TRUCK_CNT);
-        queryWorld(randId, true, shipInfo);
+        int truckID = truck_alloc++;
+        if (truck_alloc >= TRUCK_CNT) {
+            truck_alloc %= TRUCK_CNT;
+        }
+        queryWorld(truckID, true, shipInfo);
     }
 
     /**
@@ -254,8 +258,11 @@ public class WorldController {
      * @throws IOException
      */
     public void allocateAvailableTrucks(long seqNum, ShipInfo shipInfo) throws IOException {
-        int randId = new Random().nextInt(TRUCK_CNT);
-        queryWorldWithSeq(seqNum, randId, true, shipInfo);
+        int truckID = truck_alloc++;
+        if (truck_alloc >= TRUCK_CNT) {
+            truck_alloc %= TRUCK_CNT;
+        }
+        queryWorldWithSeq(seqNum, truckID, true, shipInfo);
     }
 
     /**

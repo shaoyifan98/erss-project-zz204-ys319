@@ -23,6 +23,7 @@ import java.util.concurrent.BrokenBarrierException;
 
 @Service
 public class UPSServer {
+    private final int PORT = 13579;
     private ServerSocket serverSocket;
     private AmazonController amazonController;
     private WorldController worldController;
@@ -35,7 +36,7 @@ public class UPSServer {
     @Autowired
     UPSServer(AmazonController amazonController, WorldController worldController, TrackingShipDao trackingShipDao,
               UserDao userDao, UserTrackingDao userTrackingDao, ProductDao productDao) throws IOException {
-        this.serverSocket = new ServerSocket(12350, 100);
+        this.serverSocket = new ServerSocket(PORT);
         this.amazonController = amazonController;
         this.worldController = worldController;
         this.trackingShipDao = trackingShipDao;
@@ -138,12 +139,18 @@ public class UPSServer {
     }
 
     void handlerLoaded(List<AmazonLoaded> loadeds) throws IOException {
-        for (AmazonLoaded loaded : loadeds) {
-            ShipInfo shipInfo = trackingShipDao.getShipInfoByShipID(loaded.getShipid()).get(0);
-            sendAck(loaded.getSeq()); // send back to amazon
-
-            worldController.goDeliver(shipInfo);
-        }
+        new Thread(() -> {
+            try {
+                for (AmazonLoaded loaded : loadeds) {
+                    ShipInfo shipInfo = trackingShipDao.getShipInfoByShipID(loaded.getShipid()).get(0);
+                    sendAck(loaded.getSeq()); // send back to amazon
+                    worldController.goDeliver(shipInfo);
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     void sendAck(long ack) throws IOException {

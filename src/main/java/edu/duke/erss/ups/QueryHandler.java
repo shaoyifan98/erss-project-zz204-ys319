@@ -56,7 +56,7 @@ public class QueryHandler extends WorldCommandHandler {
             UTruck uTruck = uResponses.getTruckstatus(index);
 
             // if the truck is busy
-            if (uTruck.getStatus().equals(Truck.Status.TRAVELING.getText())) {
+            if (uTruck.getStatus().equals(Truck.Status.TRAVELING.getText()) || uTruck.getStatus().equals(Truck.Status.LOADING)) {
                 worldController.allocateAvailableTrucks(info);
                 return;
             }

@@ -1,9 +1,5 @@
 package edu.duke.erss.ups;
 
-import edu.duke.erss.ups.entity.ShipInfo;
-import edu.duke.erss.ups.proto.UPStoWorld.UResponses;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.TimerTask;
 
