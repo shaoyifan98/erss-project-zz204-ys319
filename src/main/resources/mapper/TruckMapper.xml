@@ -27,4 +27,7 @@
         INSERT INTO truck_tb (truck_id, status, pos_x, pos_y)
         VALUES (#{truck.id}, #{truck.status}, #{truck.posX}, #{truck.posY});
     </insert>
+    <delete id="deleteAll">
+        DELETE FROM truck_tb;
+    </delete>
 </mapper>

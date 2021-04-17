@@ -16,4 +16,6 @@ public interface TruckDao {
     void updateTruckPos(@Param("posX") int posX, @Param("posY") int posY, @Param("truckID") int truckID);
 
     void insertTruck(@Param("truck") Truck truck);
+
+    void deleteAll();
 }

@@ -86,6 +86,7 @@ public class WorldController {
         //writing
         CodedOutputStream output = CodedOutputStream.newInstance(connection.getOutputStream());
         UConnect.Builder uConnectBuilder = UConnect.newBuilder();
+        truckDao.deleteAll();
         for (int i = 0; i < TRUCK_CNT; ++i) {
             UInitTruck.Builder uInitBuilder = UInitTruck.newBuilder();
             uInitBuilder.setId(i).setX(TRUCK_X).setY(TRUCK_Y);
