@@ -59,65 +59,6 @@ public class WorldController {
     }
 
     /**
-     * Keep receiving responses
-     */
-    void startListener() {
-        new Thread(() -> {
-            while (true) {
-                try {
-                    readUResponses();
-                }
-                catch (IOException e) {
-                }
-            }
-        }).start();
-    }
-
-    /**
-     * Got a response / responses and dispatch to correspond handler with the seq number
-     * @throws IOException
-     */
-    void readUResponses() throws IOException {
-        CodedInputStream input = CodedInputStream.newInstance(connection.getInputStream());
-        int size = input.readUInt32();
-        int limit = input.pushLimit(size);
-        UResponses uResponses = UResponses.parseFrom(input);
-        input.popLimit(limit);
-        int len = uResponses.getAcksCount();
-        for (int i = 0; i < len; ++i) {
-            long ack = uResponses.getAcks(i);
-            if (seqHandlerMap.containsKey(ack)) {
-                WorldCommandHandler handler = seqHandlerMap.get(ack);
-                handler.onReceive(uResponses, i);
-                if (!handler.getClass().equals(DeliveryHandler.class)) {
-                    seqHandlerMap.remove(ack);
-                }
-                continue; // skipping the loop
-            }
-            System.out.println("[DEBUG] ack already handled");
-            if (uResponses.getErrorCount() > 0) {
-                sendAckCommand(uResponses.getError(i).getSeqnum());
-            }
-            else if (uResponses.getCompletionsCount() > 0) {
-                sendAckCommand(uResponses.getCompletions(i).getSeqnum());
-            }
-            else if (uResponses.getDeliveredCount() > 0) {
-                sendAckCommand(uResponses.getDelivered(i).getSeqnum());
-            }
-            else if (uResponses.getTruckstatusCount() > 0) {
-                sendAckCommand(uResponses.getTruckstatus(i).getSeqnum());
-            }
-        }
-
-        //UFinish of a truck completion of all packages
-        if (uResponses.getAcksCount() == 0) {
-            UFinished uFinished = uResponses.getCompletions(0);
-            System.out.println("Truck " + uFinished.getTruckid() + " status = " + uFinished.getStatus());
-            sendAckCommand(uFinished.getSeqnum());
-        }
-    }
-
-    /**
      * Send UInit & UConnect
      */
     void initialize() {
@@ -179,6 +120,65 @@ public class WorldController {
         }
         System.out.println("UConnect: " + result + ", world id = " + worldID);
         input.popLimit(limit);
+    }
+
+    /**
+     * Keep receiving responses
+     */
+    void startListener() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    readUResponses();
+                }
+                catch (IOException e) {
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * Got a response / responses and dispatch to correspond handler with the seq number
+     * @throws IOException
+     */
+    void readUResponses() throws IOException {
+        CodedInputStream input = CodedInputStream.newInstance(connection.getInputStream());
+        int size = input.readUInt32();
+        int limit = input.pushLimit(size);
+        UResponses uResponses = UResponses.parseFrom(input);
+        input.popLimit(limit);
+        int len = uResponses.getAcksCount();
+        for (int i = 0; i < len; ++i) {
+            long ack = uResponses.getAcks(i);
+            if (seqHandlerMap.containsKey(ack)) {
+                WorldCommandHandler handler = seqHandlerMap.get(ack);
+                handler.onReceive(uResponses, i);
+                if (!handler.getClass().equals(DeliveryHandler.class)) {
+                    seqHandlerMap.remove(ack);
+                }
+                continue; // skipping the loop
+            }
+            System.out.println("[DEBUG] ack already handled");
+            if (uResponses.getErrorCount() > 0) {
+                sendAckCommand(uResponses.getError(i).getSeqnum());
+            }
+            else if (uResponses.getCompletionsCount() > 0) {
+                sendAckCommand(uResponses.getCompletions(i).getSeqnum());
+            }
+            else if (uResponses.getDeliveredCount() > 0) {
+                sendAckCommand(uResponses.getDelivered(i).getSeqnum());
+            }
+            else if (uResponses.getTruckstatusCount() > 0) {
+                sendAckCommand(uResponses.getTruckstatus(i).getSeqnum());
+            }
+        }
+
+        //UFinish of a truck completion of all packages
+        if (uResponses.getAcksCount() == 0) {
+            UFinished uFinished = uResponses.getCompletions(0);
+            System.out.println("Truck " + uFinished.getTruckid() + " status = " + uFinished.getStatus());
+            sendAckCommand(uFinished.getSeqnum());
+        }
     }
 
     public void queryWorld(int truckID) {

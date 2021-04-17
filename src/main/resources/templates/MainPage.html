@@ -13,15 +13,22 @@
             width: 100%;
             height: 100%;
             margin: 0;
-
+            background-image: url("../static/traffic.jpg");
+            background-size: 100%;
+            background-repeat: repeat;
         }
 
         .wrap {
+            display: block;
+            margin-top: 40px;
             background: rgba(255, 255, 255, .9);
-            width: 50%;
-            padding: 5%;
-            margin-left: 25%;
+            width: 20%;
+            padding: 3%;
+            margin-left: 40%;
             border-radius: 15px;
+        }
+        .main {
+            width: 100%;
         }
 
         .title {
@@ -46,8 +53,127 @@
         }
 
       
+        caption{
+            color: white;
+            font-size: xx-large;
+            text-align: center;
 
-        
+        }
+
+        .tb-title {
+            color: white;
+        }
+
+        .table-striped {
+            width: 75%;
+            margin-top: 55px;
+            margin-left: 10%;
+            background: rgba(0,0,0,.7);
+        }
+
+        .result {
+            background: rgba(0,0,0,.6);
+            width: 90%;
+            margin-left: 7%;
+            padding-bottom: 40px;
+        }
+        #logo {
+            background: #ffb710;
+            border-radius: 7px;
+            width: 100%;
+            color: white;
+            padding: 5px;
+            font-size: xxx-large;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .btn-my {
+            margin-top: 10px;
+            width: 100%;
+            font-family: "Big Caslon";
+            background-color: #722b47;
+            transition: background-color;
+            transition-duration: 300ms;
+            color: white;
+            padding: 7px;
+        }
+        .btn-my:hover {
+            color: white;
+            background-color: #b12a40;
+
+        }
+        .info_lb {
+            font-size: large;
+        }
+        .topNav {
+            padding: 0;
+            width: 50%;
+            margin-left: 5%;
+            display: block;
+            height: 30px;
+        }
+        .lg {
+            color: black;
+            background: white;
+            margin: 0;
+            padding: 5px;
+            text-align: center;
+            font-family: "Verdana";
+            font-size: medium;
+
+        }
+        .login_btn1 {
+            display: block;
+            float: left;
+            width: 25%;
+            background-color: #ffb710;
+            border-radius: 0 0 0 10px;
+            transition: height;
+            transition-duration: 300ms;
+            height: 105%;
+        }
+        .login_btn1:hover {
+            background-color: #cd930d;
+            text-decoration: none;
+            color: white;
+            height: 135%;
+        }
+        .login_btn2 {
+            display: block;
+            float: left;
+            margin-left: -4px;
+            width: 25%;
+            background-color: #b12a40;
+            transition: height;
+            transition-duration: 300ms;
+            height: 105%;
+        }
+        .login_btn2:hover {
+            background-color: #800f22;
+            text-decoration: none;
+            color: white;
+            height: 135%;
+        }
+        .login_btn3 {
+            display: block;
+            float: left;
+            background-color: #5cefe3;
+            margin-left: -4px;
+            width: 30%;
+            max-width: 30%;
+            border-radius: 0 0 10px 0;
+            text-decoration: none;
+            transition: height;
+            transition-duration: 300ms;
+            height: 105%;
+        }
+        .login_btn3:hover {
+            background-color: #2b948c;
+            color: white;
+            text-underline-mode: false;
+            height: 135%;
+            text-decoration: none;
+        }
     </style>
 </head>
 
@@ -55,21 +181,21 @@
 
 
     <div class="main">
-        <div >
-            <a display = "inline-block" class = "login_btn" type="button" th:href="@{/login}" >Login</a>
-            <a display = "inline-block" class = "login_btn" type="button" th:href="@{/logout}" >Logout</a>
-            <a display = "inline-block" class = "login_btn" type="button" th:href="@{/userDetail}" >View my packages</a>
+        <div class="topNav">
+            <a display = "inline-block" class = "lg login_btn1" type="button" th:href="@{/login}" >Login</a>
+            <a display = "inline-block" class = "lg login_btn2" type="button" th:href="@{/logout}" >Logout</a>
+            <a display = "inline-block" class = "lg login_btn3" type="button" th:href="@{/userDetail}" >View my packages</a>
         </div>
        
-        <h1 class="title">UPS </h1>
+
         <div class="wrap">
-           
+            <label id="logo">UPS</label>
             <div class="form-group">
                 <form action="#" th:action="@{/search}" th:object="${search}"  method="post">
                     <div class="form-group">
-                        <label class="info_lb">Tracking ID</label>
+                        <label class="info_lb">Tracking Number:</label>
                         <input  name="tracking_id"  placeholder="Please enter the tracking id" class="form-control" type="text" th:field="*{trackingID}" required>
-                        <button  type="submit" class="btn btn-secondary" name="search" id="search">
+                        <button  type="submit" class="btn btn-my" name="search" id="search">
                         Search
                         </button>
                     </div>
@@ -83,11 +209,11 @@
 
         </div>
 
-        <div>
+        <div class="result">
             <table class="table table-striped">
                 <caption>Search Results</caption>
                 <thead>
-                    <tr>
+                    <tr class="tb-title">
                         <th>Tracking ID</th>
                         <th>Order ID</th>
                         <th>Destination</th>
