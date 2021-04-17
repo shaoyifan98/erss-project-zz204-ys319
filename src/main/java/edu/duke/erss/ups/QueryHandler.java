@@ -71,23 +71,19 @@ public class QueryHandler extends WorldCommandHandler {
         cancelTimer();
         new Thread(() -> {
             UTruck uTruck = uResponses.getTruckstatus(index);
-
-            // if the truck is busy
-            if (uTruck.getStatus().equals(Truck.Status.TRAVELING.getText()) || uTruck.getStatus().equals(Truck.Status.LOADING)) {
-                worldController.allocateAvailableTrucks(info);
-                return;
-            }
-
             updateDistance(uTruck);
-
-            // not busy
-            System.out.println("Truck " + truckID + " status: " + uTruck.getStatus());
             if (goPickUp) {
+                // if the truck is busy
+                if (uTruck.getStatus().equals(Truck.Status.TRAVELING.getText()) || uTruck.getStatus().equals(Truck.Status.LOADING)) {
+                    worldController.allocateAvailableTrucks(info);
+                    return;
+                }
+                // not busy : allocated and start tracking
+                System.out.println("Truck " + truckID + " status: " + uTruck.getStatus());
+                worldController.trackingRecords.put(info.getTrackingID(), truckID);
                 try {
                     worldController.sendAckCommand(uTruck.getSeqnum()); //send back ack of the seq of the query
                     worldController.pickUp(truckID, info); // send truck pick up
-                    //update database order
-                    //en route db update
                     info.setTruckID(truckID);
                     info.setStatus(ShipStatus.INROUTE.getText());
                     trackingShipDao.updateTracking(info);

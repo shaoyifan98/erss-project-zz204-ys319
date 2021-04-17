@@ -17,16 +17,10 @@ import java.util.TimerTask;
 
 import javax.mail.*;
 import javax.mail.internet.*;
-
-
-
 import javax.activation.*;
 
-
 public class DeliveryHandler extends WorldCommandHandler {
-
     ArrayList<UDeliveryLocation> locations;
-
     ShipInfo shipInfo;
 
     private TrackingShipDao trackingShipDao;
@@ -85,11 +79,14 @@ public class DeliveryHandler extends WorldCommandHandler {
                 }
                 worldController.sendAckCommand(uDeliveryMade.getSeqnum());
 
-                // TODO database Package delivered
+                // database: Package delivered
                 shipInfo.setStatus(ShipStatus.DELIVERED.getText());
                 trackingShipDao.updateTracking(shipInfo);
 
-                // TODO inform amazon
+                //stop tracking
+                worldController.trackingRecords.remove(shipInfo.getTrackingID());
+
+                // inform amazon
                 worldController.amazonController.sendPackageDelivered(shipInfo);
                 User user = this.userDao.getUserByTrackingID(shipInfo.getTrackingID()).get(0);
                 String from = "shaoyf98@gmail.com";
@@ -105,7 +102,6 @@ public class DeliveryHandler extends WorldCommandHandler {
 
 
     public static void sendEmail(String from, String to, String subject, String msg) {
-
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");

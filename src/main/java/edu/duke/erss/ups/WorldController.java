@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -36,6 +37,9 @@ public class WorldController {
     UserDao userDao;
     AmazonController amazonController;
 
+    HashMap<Long, Integer> trackingRecords;
+    DistanceTracker distanceTracker;
+
     ArrayList<Long> truckIDList;
     private final int TRUCK_CNT = 200;
     private final int TRUCK_X = 1;
@@ -54,10 +58,12 @@ public class WorldController {
         this.connection = new Socket(HOST, PORT);
         this.truckIDList = new ArrayList<>();
         this.seqHandlerMap = new HashMap<>();
+        this.trackingRecords = new HashMap<>();
         this.trackingShipDao = trackingShipDao;
         this.truckDao = truckDao;
         this.userDao = userDao;
         seq = 0;
+        this.distanceTracker = new DistanceTracker(trackingRecords, trackingShipDao, this);
         initialize();
     }
 
