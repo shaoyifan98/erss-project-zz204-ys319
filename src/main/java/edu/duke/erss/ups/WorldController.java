@@ -4,6 +4,7 @@ import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.CodedOutputStream;
 import edu.duke.erss.ups.dao.TrackingShipDao;
 import edu.duke.erss.ups.dao.TruckDao;
+import edu.duke.erss.ups.dao.UserDao;
 import edu.duke.erss.ups.entity.ShipInfo;
 import edu.duke.erss.ups.entity.ShipStatus;
 import edu.duke.erss.ups.entity.Truck;
@@ -32,6 +33,7 @@ public class WorldController {
     HashMap<Long, WorldCommandHandler> seqHandlerMap;
     TrackingShipDao trackingShipDao;
     TruckDao truckDao;
+    UserDao userDao;
     AmazonController amazonController;
 
     ArrayList<Long> truckIDList;
@@ -46,7 +48,7 @@ public class WorldController {
     }
 
     @Autowired
-    WorldController(TrackingShipDao trackingShipDao, TruckDao truckDao) throws IOException {
+    WorldController(TrackingShipDao trackingShipDao, TruckDao truckDao, UserDao userDao) throws IOException {
         System.out.println("Starting world controller...");
         this.worldIDAmazonConnectBa = new CyclicBarrier(2);
         this.connection = new Socket(HOST, PORT);
@@ -54,6 +56,7 @@ public class WorldController {
         this.seqHandlerMap = new HashMap<>();
         this.trackingShipDao = trackingShipDao;
         this.truckDao = truckDao;
+        this.userDao = userDao;
         seq = 0;
         initialize();
     }
@@ -314,7 +317,7 @@ public class WorldController {
         uCommandB.addDeliveries(uGoDeliverB.build());
         if (!seqHandlerMap.containsKey(seqNum)) {
             //putting in the map
-            DeliveryHandler deliveryHandler = new DeliveryHandler(seqNum,this, shipInfo, trackingShipDao);
+            DeliveryHandler deliveryHandler = new DeliveryHandler(seqNum,this, shipInfo, trackingShipDao, userDao);
             deliveryHandler.addLocations(locations);
             deliveryHandler.setTimerAndTask();
             seqHandlerMap.put(seqNum, deliveryHandler);
