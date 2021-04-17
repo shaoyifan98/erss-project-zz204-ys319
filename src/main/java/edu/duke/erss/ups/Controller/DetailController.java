@@ -88,6 +88,7 @@ public class DetailController {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+            trackingShipDao.updateDestination(shipInfo.getTrackingID(), _x, _y);
             return "redirect:/userDetail";
         }
         model.addAttribute("message", "Can not change because the package is out of warehouse!");

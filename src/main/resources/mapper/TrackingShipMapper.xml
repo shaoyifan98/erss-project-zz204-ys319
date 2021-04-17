@@ -57,14 +57,22 @@
         FROM user_tracking_tb
         WHERE user_id=#{userID});
     </select>
+
     <select id="getShipInforByTruckID" resultMap="shipInfoList">
         SELECT *
         FROM tracking_ship_tb
         WHERE truck_id = #{truckID}
     </select>
+
      <update id="updateComment" >
         update tracking_ship_tb
         set comment=#{comment},
+        where tracking_id=#{trackingID};
+    </update>
+
+    <update id="updateDestination">
+        update tracking_ship_tb
+        set dest_x=#{x}, dest_y=#{y}
         where tracking_id=#{trackingID};
     </update>
 </mapper>
