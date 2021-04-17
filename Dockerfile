@@ -6,5 +6,5 @@ ADD . /deploy/
 RUN gradle clean build -x test
 
 ADD . /deploy
-EXPOSE 12348
+EXPOSE 13579
 ENTRYPOINT ["gradle", "bootRun"]

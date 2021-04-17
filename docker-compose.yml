@@ -18,6 +18,6 @@ services:
     volumes:
       - .:/deploy
     ports:
-      - "12348:12348"
+      - "13579:13579"
     depends_on:
       - db
