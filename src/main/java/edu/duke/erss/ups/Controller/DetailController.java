@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import edu.duke.erss.ups.MailController;
 import edu.duke.erss.ups.WorldController;
 import edu.duke.erss.ups.dao.ProductDao;
 import edu.duke.erss.ups.dao.TrackingShipDao;
@@ -19,6 +20,7 @@ import edu.duke.erss.ups.dao.TruckDao;
 import edu.duke.erss.ups.entity.Product;
 import edu.duke.erss.ups.entity.ShipInfo;
 import edu.duke.erss.ups.entity.Truck;
+import edu.duke.erss.ups.entity.User;
 
 @Controller
 public class DetailController {
@@ -26,13 +28,15 @@ public class DetailController {
     private ProductDao productDao;
     private TruckDao truckDao;
     private WorldController worldController;
+    private MailController mailController;
 
     public DetailController(TrackingShipDao trackingShipDao, ProductDao productDao, TruckDao truckDao,
-            WorldController worldController) {
+            WorldController worldController, MailController mailController) {
         this.trackingShipDao = trackingShipDao;
         this.productDao = productDao;
         this.truckDao = truckDao;
         this.worldController = worldController;
+        this.mailController = mailController;
     }
 
     @RequestMapping("/detail")
@@ -88,7 +92,7 @@ public class DetailController {
         }
         model.addAttribute("message", "Can not change because the package is out of warehouse!");
         return "changeDestination";
-        
+
     }
 
     @RequestMapping("/comment")
@@ -101,6 +105,14 @@ public class DetailController {
         HttpSession session = request.getSession();
         Long trackingID = (Long) session.getAttribute("currTrackingID");
         trackingShipDao.updateComment(trackingID, comment);
+        User user = (User) session.getAttribute("user");
+        if(user != null){
+            String from = "shaoyf98@gmail.com";
+            String to = user.getEmail();
+            String subject = "Thank you for your comment!";
+            String msg = "Dear " + user.getName() + ", your comment has been recorded!";
+            mailController.sendEmail(from, to, subject, msg);
+        }
         return "redirect:/userDetail";
     }
 }
