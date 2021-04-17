@@ -56,10 +56,15 @@
         }
 
         #logo {
+            display: inline-block;
             background: #ffb710;
             border-radius: 7px;
             color: white;
             padding: 5px;
+        }
+        #logo:hover {
+            text-decoration: none;
+            background: #d99d0f;
         }
 
         .message{
@@ -76,7 +81,7 @@
            <p class = "message" th:text="${message}"></p>
         </div>
         <div class="wrap">
-            <h1 class="title">Register <label id="logo">UPS</label></h1>
+            <h1 class="title">Register <a id="logo" th:href="@{/main}">UPS</a></h1>
             <form action="#" th:action="@{/register}" th:object="${user}"  method="post">
              
               <div class="form-group">

@@ -13,15 +13,9 @@
             width: 100%;
             height: 100%;
             margin: 0;
-
-        }
-
-        .wrap {
-            background: rgba(255, 255, 255, .9);
-            width: 50%;
-            padding: 5%;
-            margin-left: 25%;
-            border-radius: 15px;
+            background-image: url("../static/traffic.jpg");
+            background-size: 100%;
+            background-repeat: repeat;
         }
 
         .title {
@@ -45,9 +39,54 @@
             font-size: medium;
         }
 
-      
+        .nav-top {
+            height: 30px;
+        }
 
-        
+        .lg {
+            color: black;
+            background: white;
+            margin: 0;
+            padding: 5px;
+            text-align: center;
+            font-family: "Verdana";
+            font-size: medium;
+            height: 30px;
+        }
+        .login_btn1 {
+            margin-left: 10px;
+            display: block;
+            float: left;
+            width: 10%;
+            background-color: #ffb710;
+            border-radius: 0 0 10px 10px;
+            transition: height;
+            transition-duration: 300ms;
+            height: 105%;
+        }
+        .login_btn1:hover {
+            background-color: #cd930d;
+            text-decoration: none;
+            color: white;
+            height: 135%;
+        }
+        @keyframes
+        raiseUp {
+            0% {
+                transform: translateY(100%);
+                transition: opacity;
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .tb-wrap {
+            padding: 5%;
+            animation: 600ms ease-out 200ms 1 raiseUp;
+            color: white;
+        }
     </style>
 </head>
 
@@ -55,16 +94,16 @@
 
 
     <div class="main">
-        <div >
-            <a display = "inline-block" class = "login_btn" type="button" th:href="@{/}" >MainPage</a>  
+        <div class="nav-top">
+            <a display = "inline-block" class = "lg login_btn1" type="button" th:href="@{/}" >MainPage</a>
         </div>
        
         <h1 class="title">Your Shipment </h1>
         
-        <div>
+        <div class="tb-wrap">
             <table class="table table-striped">
-                <caption>Results</caption>
-                <thead>
+<!--                <caption>Results</caption>-->
+                <thead style="background: rgba(0,0,0,.8);font-size: large">
                     <tr>
                         <th>Tracking ID</th>
                         <th>Order ID</th>
@@ -72,7 +111,7 @@
                         <th>Status</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style="font-size: medium">
                     <tr th:each="result:${results}">
                        <td>
                             <a th:text="${result.trackingID}" th:href="@{/detail(id=${result.trackingID})}"></a>

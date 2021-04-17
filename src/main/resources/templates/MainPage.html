@@ -18,8 +18,34 @@
             background-repeat: repeat;
         }
 
+        @keyframes
+        raiseUp {
+            0% {
+                transform: translateY(100%);
+                transition: opacity;
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @keyframes
+        expand {
+            0% {
+                transform: scaleX(0);
+                transition: opacity;
+                opacity: 0;
+            }
+            100% {
+                transform: scaleX(1);
+                opacity: 1;
+            }
+        }
+
         .wrap {
             display: block;
+            animation: 400ms ease-out 400ms 1 raiseUp;
             margin-top: 40px;
             background: rgba(255, 255, 255, .9);
             width: 20%;
@@ -31,22 +57,6 @@
             width: 100%;
         }
 
-        .title {
-            margin-left: 30%;
-            margin-right: 30%;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: xxx-large;
-            padding: 2%;
-            color: white;
-            background: rgba(0, 0, 0, .8);
-            border-radius: 10px;
-        }
-        
-        .login_btn{
-            margin-left: 3%;
-            font-size: medium;
-        }
         .message{
             text-align: center;
             font-size: medium;
@@ -73,6 +83,7 @@
 
         .result {
             background: rgba(0,0,0,.6);
+            animation: 600ms ease-out 600ms 1 expand;
             width: 90%;
             margin-left: 7%;
             padding-bottom: 40px;
@@ -105,8 +116,18 @@
         .info_lb {
             font-size: large;
         }
+        @keyframes
+        slideDown {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
         .topNav {
             padding: 0;
+            /*animation: 500ms ease-out 500ms 1 sildeDown;*/
             width: 50%;
             margin-left: 5%;
             display: block;
