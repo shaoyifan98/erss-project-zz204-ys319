@@ -62,13 +62,14 @@ public class UPSServer {
         }
         amazonController.sendWorld(WorldController.worldID, socket);
         while (true) {
-            int size = input.readUInt32();
-            int limit = input.pushLimit(size);
-            UACommands uaCommands = UACommands.parseFrom(input);
-            input.popLimit(limit);
-            handleAcks(uaCommands.getAcksList());
-            handlePickUp(uaCommands.getPickList());
-            handlerLoaded(uaCommands.getLoadList());
+            System.out.println(input.readString());
+//            int size = input.readUInt32();
+//            int limit = input.pushLimit(size);
+//            UACommands uaCommands = UACommands.parseFrom(input);
+//            input.popLimit(limit);
+//            handleAcks(uaCommands.getAcksList());
+//            handlePickUp(uaCommands.getPickList());
+//            handlerLoaded(uaCommands.getLoadList());
         }
     }
 
