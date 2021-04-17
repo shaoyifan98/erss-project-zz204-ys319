@@ -108,6 +108,7 @@
                         <th>Tracking ID</th>
                         <th>Order ID</th>
                         <th>Destination</th>
+                        <th>Distance</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -118,6 +119,7 @@
                        </td>
                        <td th:text="${result.shipID}"></td>
                        <td th:text="'(' + ${result.destX} + ' ,' + ${result.destY} + ')'"></td>
+                       <td th:text="${result.distance}"></td>
                        <td th:text="${result.status}"></td>
                     </tr>
                 </tbody>

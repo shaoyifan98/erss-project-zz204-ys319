@@ -13,17 +13,14 @@
             width: 100%;
             height: 100%;
             margin: 0;
-            background-image: url("images/traffic.jpg");
-            background-size: 100%;
-            background-repeat: repeat;
 
         }
 
         .wrap {
             background: rgba(255, 255, 255, .9);
             width: 50%;
-            padding: 5%;
-            margin-left: 25%;
+            margin-left: 30%;
+            padding-right: 10%;
             border-radius: 30px;
         }
 
@@ -44,8 +41,19 @@
             font-size: medium;
         }
 
-        .myForm {
-            width: 85%;
+        .form-group {
+            margin-top: 1%;
+            margin-bottom: 2%;
+        }
+
+        .info_lb {
+            font-size: large;
+            text-align: right;
+            color: #722b47;
+        }
+        .login_btn{
+            margin-left: 3%;
+            font-size: medium;
         }
     </style>
 </head>
@@ -54,30 +62,38 @@
 
 
     <div class="main">
-        <h1 class="title">Login <label id="logo">UPS</label></h1>
+        <div >
+            <a display = "inline-block" class = "login_btn" type="button" th:href="@{/}" >MainPage</a>  
+        </div>
+        <h1 class="title">Change Destination</h1>
         <div th:if="${message}">
             <p class="message" th:text="${message}"></p>
         </div>
+       
+
         <div class="wrap">
-            <form action="#" th:action="@{/login}" th:object="${user}" method="post">
+            <form action="#" th:action="@{/changeDestination}"  method="post">
+                <div class="form-group">
+                    <label for="x">X position:</label>
+                    <input type="text" name="x" class="form-control" id="x"  required>
+                </div>
 
                 <div class="form-group">
-                    <label for="username">User Name:</label>
-                    <input type="text" placeholder="username" name="username" class="form-control" id="username" th:field="*{name}" required>
+                    <label for="y">Y position:</label>
+                    <input type="text" name="y" class="form-control" id="y"  required>
                 </div>
-                <div class="form-group">
-                    <label for="pwd">Password:</label>
-                    <input type="password" placeholder="password" name="password" class="form-control" id="pwd" th:field="*{password}"
-                        required>
-                </div>
+
                 <div class="btn-group">
-                    <button type="submit" class="btn btn-primary" style="padding-right: 40px">Login</button>
-                    <a type="button" class="btn btn-warning" th:href="@{/register}">Register</a>
+                    <button type="submit" class="btn btn-primary" style="padding-right: 40px">Change</button>
                 </div>
+                
             </form>
-
         </div>
+
+
     </div>
+
+    
 </body>
 
 </html>

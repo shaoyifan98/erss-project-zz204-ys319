@@ -23,4 +23,6 @@ public interface TrackingShipDao {
     List<ShipInfo> getShipInfoByUserID(@Param("userID") Integer userID);
 
     List<ShipInfo> getShipInforByTruckID(@Param("truckID") Integer truckID);
+
+    void updateComment(@Param("trackingID") Long trackingID, @Param("comment") String comment);
 }

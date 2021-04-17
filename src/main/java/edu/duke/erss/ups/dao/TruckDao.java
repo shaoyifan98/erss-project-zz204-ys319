@@ -17,5 +17,6 @@ public interface TruckDao {
 
     void insertTruck(@Param("truck") Truck truck);
 
+    List<Truck> getTruckByTrackingID(@Param("trackingID") Long trackingID);
     void deleteAll();
 }

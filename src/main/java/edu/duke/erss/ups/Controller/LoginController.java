@@ -28,11 +28,6 @@ public class LoginController {
 
     @PostMapping("/login")
     public String login(@ModelAttribute User user, Model model, HttpServletRequest request) {
-        // validate
-        // ArrayList<Result> results = new ArrayList<Result>();
-        // results.add(new Result("1", "a", "created"));
-        // results.add(new Result("2", "b", "created"));
-        // results.add(new Result("3", "c", "created"));
         HttpSession session = request.getSession();
         List<User> users = userDao.getUserByName(user.getName());
         if (users.size() == 0) {

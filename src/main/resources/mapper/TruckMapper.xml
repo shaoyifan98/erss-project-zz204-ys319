@@ -27,6 +27,13 @@
         INSERT INTO truck_tb (truck_id, status, pos_x, pos_y)
         VALUES (#{truck.id}, #{truck.status}, #{truck.posX}, #{truck.posY});
     </insert>
+
+    <select id="getTruckByTrackingID" resultMap="truckList">
+        SELECT *
+        FROM truck_tb
+        WHERE truck_id IN
+        (SELECT truck_id FROM tracking_ship_tb WHERE tracking_id = #{trackingID})
+    </select>
     <delete id="deleteAll">
         DELETE FROM truck_tb;
     </delete>
