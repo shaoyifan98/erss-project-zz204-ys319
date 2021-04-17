@@ -31,6 +31,11 @@
             distance=#{shipInfo.distance}
         where tracking_id=#{shipInfo.trackingID};
     </update>
+    <update id="updateDistance">
+        update tracking_ship_tb
+        set distance=#{distance}
+        where ship_id=#{shipID};
+    </update>
 
     <select id="getShipInfoByShipID" resultMap="shipInfoList">
         SELECT *
@@ -53,4 +58,9 @@
         WHERE user_id=#{userID});
     </select>
 
+    <select id="getShipInforByTruckID" resultMap="shipInfoList">
+        SELECT *
+        FROM tracking_ship_tb
+        WHERE truck_id = #{truckID}
+    </select>
 </mapper>

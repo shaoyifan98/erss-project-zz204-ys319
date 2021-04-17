@@ -14,11 +14,13 @@ public interface TrackingShipDao {
 
     void updateTracking(@Param("shipInfo") ShipInfo shipInfo);
 
+    void updateDistance(@Param("shipID") Long shipID, @Param("distance") Double distance);
+
     List<ShipInfo> getShipInfoByShipID(@Param("shipID") Long shipID);
 
     List<ShipInfo> getShipInfoByTrackingID(@Param("trackingID") Long trackingID);
 
     List<ShipInfo> getShipInfoByUserID(@Param("userID") Integer userID);
 
-    
+    List<ShipInfo> getShipInforByTruckID(@Param("truckID") Integer truckID);
 }

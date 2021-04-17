@@ -1,6 +1,7 @@
 package edu.duke.erss.ups;
 
 import edu.duke.erss.ups.dao.TrackingShipDao;
+import edu.duke.erss.ups.dao.TruckDao;
 import edu.duke.erss.ups.entity.ShipInfo;
 import edu.duke.erss.ups.entity.ShipStatus;
 import edu.duke.erss.ups.entity.Truck;
@@ -12,15 +13,16 @@ import java.util.ArrayList;
 import java.util.TimerTask;
 
 public class PickUpHandler extends WorldCommandHandler {
-
     ShipInfo shipInfo;
-
     TrackingShipDao trackingShipDao;
+    TruckDao truckDao;
 
-    PickUpHandler(long seq, int truckID, ShipInfo shipInfo, WorldController worldController, TrackingShipDao trackingShipDao) {
+    PickUpHandler(long seq, int truckID, ShipInfo shipInfo, WorldController worldController,
+                  TrackingShipDao trackingShipDao, TruckDao truckDao) {
         super(seq, truckID, worldController);
         this.shipInfo = shipInfo;
         this.trackingShipDao = trackingShipDao;
+        this.truckDao = truckDao;
     }
 
     @Override
@@ -50,6 +52,7 @@ public class PickUpHandler extends WorldCommandHandler {
                 //database operation : truck arrive, waiting for package
                 shipInfo.setStatus(ShipStatus.WAITING.getText());
                 trackingShipDao.updateTracking(shipInfo);
+                truckDao.updateTruckStatus(truckID, Truck.Status.ARR_WH.getText());
 
                 //inform amazon to load
                 ArrayList<Long> shipIDs = new ArrayList<>();
