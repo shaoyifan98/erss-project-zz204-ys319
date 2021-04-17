@@ -291,7 +291,8 @@ public class WorldController {
         uCommandB.addPickups(uGoPickB.build());
         if (!seqHandlerMap.containsKey(seqNum)) {
             //putting in the map
-            PickUpHandler pickUpHandler = new PickUpHandler(seqNum, truckID, shipInfo, this, trackingShipDao);
+            PickUpHandler pickUpHandler = new PickUpHandler(seqNum, truckID, shipInfo, this,
+                    trackingShipDao, truckDao);
             pickUpHandler.setTimerAndTask();
             seqHandlerMap.put(seqNum, pickUpHandler);
         }
@@ -300,6 +301,8 @@ public class WorldController {
         output.writeUInt32NoTag(data.length);
         commands.writeTo(output);
         output.flush();
+        // update truck status
+        truckDao.updateTruckStatus(truckID, Truck.Status.TRAVELING.getText());
     }
 
     public void goDeliver(ShipInfo shipInfo) throws IOException {
@@ -330,6 +333,8 @@ public class WorldController {
         // Update DB
         shipInfo.setStatus(ShipStatus.DELIVERING.getText());
         trackingShipDao.updateTracking(shipInfo);
+        // update truck status
+        truckDao.updateTruckStatus(shipInfo.getTruckID(), Truck.Status.DELIVERING.getText());
     }
 
     public void sendAckCommand(long ack) throws IOException {

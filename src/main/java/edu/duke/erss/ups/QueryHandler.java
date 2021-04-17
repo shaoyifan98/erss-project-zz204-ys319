@@ -8,6 +8,7 @@ import edu.duke.erss.ups.proto.UPStoWorld.UResponses;
 import edu.duke.erss.ups.proto.UPStoWorld.UTruck;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.TimerTask;
 
 public class QueryHandler extends WorldCommandHandler {
@@ -49,6 +50,22 @@ public class QueryHandler extends WorldCommandHandler {
         timer.schedule(resend, TIME_OUT);
     }
 
+    double calcDistance(double dx, double dy, double sx, double sy) {
+        double deltaX = Math.abs(dx - sx);
+        double deltaY = Math.abs(dy - sy);
+        return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+    }
+
+    void updateDistance(UTruck currTruck) {
+        List<ShipInfo> shipInfos = trackingShipDao.getShipInforByTruckID(truckID);
+        for (ShipInfo shipInfo : shipInfos) {
+            int destX = shipInfo.getDestX();
+            int destY = shipInfo.getDestY();
+            double distance = calcDistance(destX, destY, currTruck.getX(), currTruck.getY());
+            trackingShipDao.updateDistance(shipInfo.getShipID(), distance);
+        }
+    }
+
     @Override
     public void onReceive(UResponses uResponses, int index) throws RuntimeException {
         cancelTimer();
@@ -60,6 +77,8 @@ public class QueryHandler extends WorldCommandHandler {
                 worldController.allocateAvailableTrucks(info);
                 return;
             }
+
+            updateDistance(uTruck);
 
             // not busy
             System.out.println("Truck " + truckID + " status: " + uTruck.getStatus());
