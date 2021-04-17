@@ -18,6 +18,21 @@
         WHERE username=#{username};
     </select>
 
+    <select id="getUserByID" resultMap="userList" >
+        SELECT *
+        FROM USER_TB
+        WHERE user_id=#{id};
+    </select>
+
+    <select id="getUserByTrackingID" resultMap="userList" >
+        SELECT *
+        FROM USER_TB
+        WHERE user_id IN
+        ( SELECT user_id
+        FROM user_tracking_tb
+        WHERE tracking_id=#{trackingID});
+    </select>
+
     <insert id="insertUser" parameterType="edu.duke.erss.ups.entity.User"
             useGeneratedKeys="true" keyColumn="user_id" keyProperty="user.id">
         insert into user_tb (username, passwd, email)

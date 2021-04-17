@@ -53,4 +53,10 @@
         WHERE user_id=#{userID});
     </select>
 
+     <update id="updateComment" >
+        update tracking_ship_tb
+        set comment=#{comment},
+        where tracking_id=#{trackingID};
+    </update>
+
 </mapper>

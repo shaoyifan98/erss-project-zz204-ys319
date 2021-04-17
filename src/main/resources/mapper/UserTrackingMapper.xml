@@ -18,5 +18,11 @@
         values (#{userID},#{trackingID});
     </insert>
 
+    <select id="getUserIDByTrackingID" resultType="long">
+        SELECT user_id
+        FROM user_tracking_tb
+        WHERE tracking_id=#{trackingID};
+    </select>
+
     
 </mapper>

@@ -12,7 +12,13 @@ public interface UserDao {
 
     List<User> getUserByName(@Param("username") String username);
 
+    List<User> getUserByID(@Param("id") int id);
+
     void insertUser(@Param("user") User user);
+
+    List<User> getUserByTrackingID(@Param("trackingID") Long trackingID);
+
+
 
     
 }

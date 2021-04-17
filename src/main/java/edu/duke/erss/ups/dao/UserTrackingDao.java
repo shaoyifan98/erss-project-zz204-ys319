@@ -11,4 +11,8 @@ public interface UserTrackingDao {
     List<Long> getUserPackages(@Param("userID") int userID);
 
     void insertTracking(@Param("userID") int userID, @Param("trackingID") long trackingID);
+
+    List<Long> getUserIDByTrackingID(@Param("trackingID") long trackingID);
+
+    
 }
