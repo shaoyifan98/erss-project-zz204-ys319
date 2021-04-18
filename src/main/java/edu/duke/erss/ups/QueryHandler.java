@@ -62,6 +62,8 @@ public class QueryHandler extends WorldCommandHandler {
             int destX = shipInfo.getDestX();
             int destY = shipInfo.getDestY();
             double distance = calcDistance(destX, destY, currTruck.getX(), currTruck.getY());
+            System.out.println("Update distance from Truck " + currTruck.getTruckid() + " of tracking "
+                    + shipInfo.getTrackingID() + ": " + distance);
             trackingShipDao.updateDistance(shipInfo.getShipID(), distance);
         }
     }
