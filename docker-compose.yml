@@ -19,5 +19,6 @@ services:
       - .:/deploy
     ports:
       - "13579:13579"
+      - "8080:8080"
     depends_on:
       - db
