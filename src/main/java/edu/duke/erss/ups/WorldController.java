@@ -195,10 +195,6 @@ public class WorldController {
         }
     }
 
-    void handleQuery(UResponses uResponses) {
-
-    }
-
     public void queryWorld(int truckID) {
         queryWorld(truckID, false);
     }
@@ -218,8 +214,8 @@ public class WorldController {
         }).start();
     }
 
-    void queryWorldWithSeq(long pickSeq, int truckID, boolean goPickUp, ShipInfo shipInfo) throws IOException {
-        sendQuery(seq++, truckID, goPickUp, pickSeq, shipInfo);
+    void queryWorldWithSeq(long pickSeq, int truckID, boolean goPickUp, ShipInfo shipInfo, long querySeq) throws IOException {
+        sendQuery(querySeq, truckID, goPickUp, pickSeq, shipInfo);
     }
 
     /**
@@ -284,7 +280,7 @@ public class WorldController {
             truck_alloc %= TRUCK_CNT;
         }
         shipInfo.setTruckID(truckID);
-        queryWorldWithSeq(seqNum, truckID, true, shipInfo);
+        queryWorldWithSeq(seqNum, truckID, true, shipInfo, seq++);
     }
 
     /**
