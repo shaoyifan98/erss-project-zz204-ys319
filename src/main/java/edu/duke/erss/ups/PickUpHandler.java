@@ -31,6 +31,7 @@ public class PickUpHandler extends WorldCommandHandler {
             @Override
             public void run() {
                 try {
+                    System.out.println("Resending seq=" + seq + ", tracking=" + shipInfo.getTrackingID());
                     worldController.allocateAvailableTrucks(seq, shipInfo);
                 } catch (IOException e) {
                     e.printStackTrace();

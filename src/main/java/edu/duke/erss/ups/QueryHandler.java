@@ -39,14 +39,15 @@ public class QueryHandler extends WorldCommandHandler {
         resend = new TimerTask() {
             @Override
             public void run() {
-                try {
-                    if (goPickUp) {
-                        worldController.sendQuery(seq, truckID, goPickUp, pickSeq, info);
-                    }
-                }
-                catch (IOException e) {
-                    System.out.println("Timer task IO exception: " + e.getMessage());
-                }
+//                try {
+//                    if (goPickUp) {
+////                        worldController.sendQuery(seq, truckID, goPickUp, pickSeq, info);
+//                        worldController.queryWorldWithSeq(pickSeq, truckID, goPickUp, info);
+//                    }
+//                }
+//                catch (IOException e) {
+//                    System.out.println("Timer task IO exception: " + e.getMessage());
+//                }
             }
         };
         timer.schedule(resend, TIME_OUT);

@@ -41,7 +41,7 @@ public class WorldController {
     DistanceTracker distanceTracker;
 
     ArrayList<Long> truckIDList;
-    private final int TRUCK_CNT = 200;
+    private final int TRUCK_CNT = 10000;
     private final int TRUCK_X = 1;
     private final int TRUCK_Y = 1;
     private static int truck_alloc = 0;
@@ -265,6 +265,7 @@ public class WorldController {
         if (truck_alloc >= TRUCK_CNT) {
             truck_alloc %= TRUCK_CNT;
         }
+        shipInfo.setTruckID(truckID);
         queryWorld(truckID, true, shipInfo);
     }
 
@@ -279,6 +280,7 @@ public class WorldController {
         if (truck_alloc >= TRUCK_CNT) {
             truck_alloc %= TRUCK_CNT;
         }
+        shipInfo.setTruckID(truckID);
         queryWorldWithSeq(seqNum, truckID, true, shipInfo);
     }
 
