@@ -40,7 +40,9 @@ public class QueryHandler extends WorldCommandHandler {
             @Override
             public void run() {
                 try {
-                    worldController.sendQuery(seq, truckID, goPickUp, pickSeq, info);
+                    if (goPickUp) {
+                        worldController.sendQuery(seq, truckID, goPickUp, pickSeq, info);
+                    }
                 }
                 catch (IOException e) {
                     System.out.println("Timer task IO exception: " + e.getMessage());
