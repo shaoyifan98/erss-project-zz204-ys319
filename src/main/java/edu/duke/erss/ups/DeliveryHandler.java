@@ -12,6 +12,7 @@ import edu.duke.erss.ups.proto.UPStoWorld.UResponses;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.TimerTask;
 
@@ -88,12 +89,15 @@ public class DeliveryHandler extends WorldCommandHandler {
 
                 // inform amazon
                 worldController.amazonController.sendPackageDelivered(shipInfo);
-                User user = this.userDao.getUserByTrackingID(shipInfo.getTrackingID()).get(0);
-                String from = "shaoyf98@gmail.com";
-                String to = user.getEmail();
-                String subject = "Your package has been delivered!";
-                String msg = "Dear " + user.getName() + ", your shipment has been delivered!";
-                sendEmail(from, to, subject, msg);
+                List<User> users = this.userDao.getUserByTrackingID(shipInfo.getTrackingID());
+                if (users != null && !users.isEmpty()) {
+                    User user = users.get(0);
+                    String from = "shaoyf98@gmail.com";
+                    String to = user.getEmail();
+                    String subject = "Your package has been delivered!";
+                    String msg = "Dear " + user.getName() + ", your shipment has been delivered!";
+                    sendEmail(from, to, subject, msg);
+                }
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }

@@ -112,7 +112,7 @@
                         <th>Status</th>
                     </tr>
                 </thead>
-                <tbody style="font-size: medium">
+                <tbody style="font-size: medium; color: black">
                     <tr th:each="result:${results}">
                        <td>
                             <a th:text="${result.trackingID}" th:href="@{/detail(id=${result.trackingID})}"></a>
