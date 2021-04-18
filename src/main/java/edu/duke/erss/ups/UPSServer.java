@@ -145,7 +145,7 @@ public class UPSServer {
                 for (AmazonLoaded loaded : loadeds) {
                     ShipInfo shipInfo = trackingShipDao.getShipInfoByShipID(loaded.getShipid()).get(0);
                     sendAck(loaded.getSeq()); // send back to amazon
-                    worldController.goDeliver(shipInfo);
+                    worldController.goDeliver(null, shipInfo);
                 }
             }
             catch (IOException e) {

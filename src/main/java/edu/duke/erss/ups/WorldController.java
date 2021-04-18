@@ -192,6 +192,10 @@ public class WorldController {
         }
     }
 
+    void handleQuery(UResponses uResponses) {
+
+    }
+
     public void queryWorld(int truckID) {
         queryWorld(truckID, false);
     }
@@ -312,7 +316,7 @@ public class WorldController {
         truckDao.updateTruckStatus(truckID, Truck.Status.TRAVELING.getText());
     }
 
-    public void goDeliver(ShipInfo shipInfo) throws IOException {
+    public void goDeliver(Long oldSeq, ShipInfo shipInfo) throws IOException {
         CodedOutputStream output = CodedOutputStream.newInstance(connection.getOutputStream());
         UCommands.Builder uCommandB = UCommands.newBuilder();
         UGoDeliver.Builder uGoDeliverB = UGoDeliver.newBuilder();
@@ -321,7 +325,7 @@ public class WorldController {
         UDeliveryLocation.Builder locationB = UDeliveryLocation.newBuilder();
         locationB.setX(shipInfo.getDestX()).setY(shipInfo.getDestY()).setPackageid(shipInfo.getShipID());
         locations.add(locationB.build());
-        long seqNum = seq++;
+        long seqNum = oldSeq == null ? seq++ : oldSeq;
         // Build command
         uGoDeliverB.setSeqnum(seqNum).addAllPackages(locations).setTruckid(shipInfo.getTruckID());
         uCommandB.addDeliveries(uGoDeliverB.build());

@@ -45,7 +45,7 @@ public class DeliveryHandler extends WorldCommandHandler {
             @Override
             public void run() {
                 try {
-                    worldController.goDeliver(shipInfo);
+                    worldController.goDeliver(seq, shipInfo);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
