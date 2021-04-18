@@ -77,6 +77,7 @@ public class UPSServer {
         new Thread(() -> {
             for (long ack : acks) {
                 if (amazonController.seqHandlerMap.containsKey(ack)) {
+                    System.out.println("Receive from amazon ack = " + ack);
                     AmazonCommandHandler commandHandler = amazonController.seqHandlerMap.get(ack);
                     commandHandler.onReceive();
                     amazonController.seqHandlerMap.remove(ack);
@@ -89,6 +90,7 @@ public class UPSServer {
         new Thread(() -> {
             try {
                 for (AmazonPick pick : pickUps) {
+                    System.out.println("Receive from amazon pick up = " + pick.getShipid());
                     ShipInfo shipInfo = new ShipInfo();
                     shipInfo.setShipID(pick.getShipid());
                     shipInfo.setStatus(ShipStatus.CREATED.getText());
@@ -143,6 +145,7 @@ public class UPSServer {
         new Thread(() -> {
             try {
                 for (AmazonLoaded loaded : loadeds) {
+                    System.out.println("Receive from amazon loaded = " + loaded.getShipid() + " truck " + loaded.getTruckID());
                     ShipInfo shipInfo = trackingShipDao.getShipInfoByShipID(loaded.getShipid()).get(0);
                     sendAck(loaded.getSeq()); // send back to amazon
                     worldController.goDeliver(null, shipInfo);
