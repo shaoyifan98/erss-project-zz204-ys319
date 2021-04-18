@@ -21,17 +21,17 @@ public class QueryHandler extends WorldCommandHandler {
 
     TrackingShipDao trackingShipDao;
 
-    QueryHandler(long seq, int truckID, WorldController worldController, boolean goPickUp) {
+    QueryHandler(long seq, int truckID, WorldController worldController, boolean goPickUp, TrackingShipDao trackingShipDao) {
         super(seq, truckID, worldController);
         this.goPickUp = goPickUp;
+        this.trackingShipDao = trackingShipDao;
     }
 
     QueryHandler(long seq, int truckID, WorldController worldController,
                  boolean goPickUp, long pickSeq, ShipInfo shipInfo, TrackingShipDao trackingShipDao) {
-        this(seq, truckID, worldController, goPickUp);
+        this(seq, truckID, worldController, goPickUp, trackingShipDao);
         this.pickSeq = pickSeq;
         this.info = shipInfo;
-        this.trackingShipDao = trackingShipDao;
     }
 
     @Override

@@ -239,7 +239,7 @@ public class WorldController {
                 queryHandler = new QueryHandler(seqNum, truckID, this, goPickUp, pickSeq, shipInfo, trackingShipDao);
             }
             else {
-                queryHandler = new QueryHandler(seqNum, truckID, this, goPickUp);
+                queryHandler = new QueryHandler(seqNum, truckID, this, goPickUp, trackingShipDao);
             }
             queryHandler.setTimerAndTask();
             seqHandlerMap.put(seqNum, queryHandler);
