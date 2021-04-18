@@ -159,8 +159,11 @@ public class WorldController {
         UResponses uResponses = UResponses.parseFrom(input);
         input.popLimit(limit);
         int len = uResponses.getAcksCount();
+        System.out.println("Received a UResponse: len of acks=" + uResponses.getAcksCount() + " uf=" + uResponses.getCompletionsCount()
+                + " truckStatus=" + uResponses.getTruckstatusCount() + " delieverd=" + uResponses.getDeliveredCount());
         for (int i = 0; i < len; ++i) {
             long ack = uResponses.getAcks(i);
+            System.out.println("Received ack = " + ack + " at index = " + i);
             if (seqHandlerMap.containsKey(ack)) {
                 WorldCommandHandler handler = seqHandlerMap.get(ack);
                 handler.onReceive(uResponses, i);
