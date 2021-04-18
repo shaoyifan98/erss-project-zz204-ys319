@@ -82,12 +82,6 @@ public class DetailController {
         if (status.equals("traveling") || status.equals("arrive warehouse")) {
             shipInfo.setDestX(_x);
             shipInfo.setDestY(_y);
-            try {
-                worldController.goDeliver(shipInfo);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
             trackingShipDao.updateDestination(shipInfo.getTrackingID(), _x, _y);
             return "redirect:/userDetail";
         }

@@ -146,7 +146,7 @@
                         <th>Status</th>
                     </tr>
                 </thead>
-                <tbody style="font-size: medium">
+                <tbody style="font-size: medium; color: black">
                     <tr>
                        <td>
                             <a th:text="${result.trackingID}" th:href="@{/detail(id=${result.trackingID})}"></a>
@@ -170,7 +170,7 @@
                         <th>Number</th>
                     </tr>
                 </thead>
-                <tbody style="font-size: medium">
+                <tbody style="font-size: medium; color: black">
                     <tr th:each="product:${products}">
                         <td th:text="${product.name}"></td>
                         <td th:text="${product.description}"></td>
