@@ -79,6 +79,7 @@ public class WorldController {
                 readInitialize();
                 worldIDAmazonConnectBa.await();
                 //start listen world messages
+                distanceTracker.start();
                 startListener();
             }
             catch (IOException e) {
