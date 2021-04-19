@@ -13,7 +13,7 @@ create table tracking_ship_tb (
                                   dest_x integer,
                                   dest_y integer,
                                   comment varchar(200),
-                                  distance double precision，
+                                  distance double precision,
                                       whID integer,
 );
 
