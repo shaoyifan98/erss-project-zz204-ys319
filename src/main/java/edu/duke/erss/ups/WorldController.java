@@ -356,13 +356,13 @@ public class WorldController {
         // Build command
         uGoDeliverB.setSeqnum(seqNum).addAllPackages(locations).setTruckid(shipInfo.getTruckID());
         uCommandB.addDeliveries(uGoDeliverB.build());
-        if (!seqHandlerMap.containsKey(seqNum)) {
-            //putting in the map
-            DeliveryHandler deliveryHandler = new DeliveryHandler(seqNum,this, shipInfo);
-            deliveryHandler.setTimerAndTask();
-            System.out.println("@Sequence: start listen to deliver " + seqNum);
-            seqHandlerMap.put(seqNum, deliveryHandler);
-        }
+
+        //putting in the map
+        DeliveryHandler deliveryHandler = new DeliveryHandler(seqNum,this, shipInfo);
+        deliveryHandler.setTimerAndTask();
+        System.out.println("@Sequence: start listen to deliver " + seqNum);
+        seqHandlerMap.put(seqNum, deliveryHandler);
+
         UCommands commands = uCommandB.build();
         byte[] data = commands.toByteArray();
         output.writeUInt32NoTag(data.length);
