@@ -90,7 +90,14 @@ public class QueryHandler extends WorldCommandHandler {
                     // not busy : allocated and start tracking
                     System.out.println("Truck " + truckID + " status: " + uTruck.getStatus() + ", sending go pick up.");
                     worldController.trackingRecords.put(info.getTrackingID(), truckID);
-                    worldController.pickUp(truckID, info); // send truck pick up
+
+                    if (pickSeq != -1) {
+                        worldController.pickUp(pickSeq, truckID, info); // send truck pick up
+                    }
+                    else {
+                        worldController.pickUp(truckID, info);
+                    }
+
                     info.setTruckID(truckID);
                     info.setStatus(ShipStatus.INROUTE.getText());
                     trackingShipDao.updateTracking(info);

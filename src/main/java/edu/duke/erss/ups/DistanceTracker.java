@@ -15,6 +15,7 @@ public class DistanceTracker extends Thread {
 
     @Override
     public void run() {
+        System.out.println("Running distance checker ... ");
         while (true) {
             try {
                 Thread.sleep(3000);

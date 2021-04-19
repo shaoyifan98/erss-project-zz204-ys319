@@ -221,24 +221,21 @@ public class WorldController {
         CodedOutputStream output = CodedOutputStream.newInstance(connection.getOutputStream());
         UCommands.Builder uCommandB = UCommands.newBuilder();
         UQuery.Builder uQueryB = UQuery.newBuilder();
-
         uQueryB.setTruckid(truckID).setSeqnum(seqNum);
         uCommandB.addQueries(uQueryB.build());
         UCommands commands = uCommandB.build();
 
-        if (!seqHandlerMap.containsKey(seqNum)) {
-            //putting in the map
-            QueryHandler queryHandler;
-            if (goPickUp) {
-                queryHandler = new QueryHandler(seqNum, truckID, this, goPickUp, pickSeq, shipInfo, trackingShipDao);
-            }
-            else {
-                queryHandler = new QueryHandler(seqNum, truckID, this, goPickUp, trackingShipDao);
-            }
-            queryHandler.setTimerAndTask();
-            System.out.println("@Sequence: start listen to query " + seqNum);
-            seqHandlerMap.put(seqNum, queryHandler);
+        //putting in the map
+        QueryHandler queryHandler;
+        if (goPickUp) {
+            queryHandler = new QueryHandler(seqNum, truckID, this, goPickUp, pickSeq, shipInfo, trackingShipDao);
         }
+        else {
+            queryHandler = new QueryHandler(seqNum, truckID, this, goPickUp, trackingShipDao);
+        }
+        queryHandler.setTimerAndTask();
+        System.out.println("@Sequence: start listen to query " + seqNum);
+        seqHandlerMap.put(seqNum, queryHandler);
 
         //sending
         byte[] data = commands.toByteArray();
