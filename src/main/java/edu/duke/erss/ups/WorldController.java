@@ -208,7 +208,12 @@ public class WorldController {
             trackingRecords.remove(shipInfo.getTrackingID());
             // inform amazon
             amazonController.sendPackageDelivered(shipInfo);
-            emailInform(shipInfo.getTrackingID());
+            try {
+                emailInform(shipInfo.getTrackingID());
+            }
+            catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
         }
 
         for (int i = 0; i < len; ++i) {
