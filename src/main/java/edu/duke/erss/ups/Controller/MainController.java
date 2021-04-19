@@ -27,7 +27,12 @@ public class MainController {
     }
 
     @RequestMapping("/")
-    public String index(Model model) {
+    public String index(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if(user != null){
+            model.addAttribute("user", user);
+        }
         model.addAttribute("search", new Search());
         model.addAttribute("results", new ArrayList<Result>());
 
@@ -35,7 +40,12 @@ public class MainController {
     }
 
     @PostMapping("/search")
-    public String search(@ModelAttribute Search search, Model model) {
+    public String search(@ModelAttribute Search search, Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if(user != null){
+            model.addAttribute("user", user);
+        }
         Long trackingNum = 0L;
         try {
             trackingNum = Long.parseLong(search.getTrackingID());
@@ -73,6 +83,7 @@ public class MainController {
         System.out.println("username" + user.getName() + " pass" + user.getPassword());
         model.addAttribute("search", new Search());
         model.addAttribute("results", new ArrayList<Result>());
+        model.addAttribute("user", user);
         return "MainPage";
     }
 
