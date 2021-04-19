@@ -98,8 +98,6 @@ public class UPSServer {
                     shipInfo.setDestX(pick.getX());
                     shipInfo.setDestY(pick.getY());
 
-                    // insert new tracking
-                    trackingShipDao.insertNewTracking(shipInfo); // update db
                     // associate with user_account
                     associateWithAccount(pick, shipInfo);
                     // save to product table

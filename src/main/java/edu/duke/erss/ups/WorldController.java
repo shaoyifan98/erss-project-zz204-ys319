@@ -313,6 +313,8 @@ public class WorldController {
             truck_alloc %= TRUCK_CNT;
         }
         shipInfo.setTruckID(truckID);
+        // insert new tracking
+        trackingShipDao.insertNewTracking(shipInfo); // update db
 //        queryWorld(truckID, true, shipInfo);
         pickUp(truckID, shipInfo);
     }
