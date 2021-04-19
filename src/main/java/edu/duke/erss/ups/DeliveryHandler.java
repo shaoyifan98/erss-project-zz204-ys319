@@ -82,6 +82,7 @@ public class DeliveryHandler extends WorldCommandHandler {
                 }
                 locations.remove(toDelete);
                 if (locations.isEmpty()) {
+                    System.out.println("@Sequence: resolving deliver " + uResponses.getAcks(index));
                     worldController.seqHandlerMap.remove(seq);
                 }
                 worldController.sendAckCommand(uDeliveryMade.getSeqnum());

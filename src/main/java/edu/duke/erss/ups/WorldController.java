@@ -169,6 +169,7 @@ public class WorldController {
                 WorldCommandHandler handler = seqHandlerMap.get(ack);
                 handler.onReceive(uResponses, i);
                 if (!handler.getClass().equals(DeliveryHandler.class)) {
+                    System.out.println("@Sequence: resolving other " + ack);
                     seqHandlerMap.remove(ack);
                 }
                 continue; // skipping the loop
@@ -235,6 +236,7 @@ public class WorldController {
                 queryHandler = new QueryHandler(seqNum, truckID, this, goPickUp, trackingShipDao);
             }
             queryHandler.setTimerAndTask();
+            System.out.println("@Sequence: start listen to query " + seqNum);
             seqHandlerMap.put(seqNum, queryHandler);
         }
 
@@ -296,6 +298,7 @@ public class WorldController {
             PickUpHandler pickUpHandler = new PickUpHandler(seqNum, truckID, shipInfo, this,
                     trackingShipDao, truckDao);
             pickUpHandler.setTimerAndTask();
+            System.out.println("@Sequence: start listen to pick up " + seqNum);
             seqHandlerMap.put(seqNum, pickUpHandler);
         }
         UCommands commands = uCommandB.build();
@@ -325,6 +328,7 @@ public class WorldController {
             DeliveryHandler deliveryHandler = new DeliveryHandler(seqNum,this, shipInfo, trackingShipDao, userDao);
             deliveryHandler.addLocations(locations);
             deliveryHandler.setTimerAndTask();
+            System.out.println("@Sequence: start listen to deliver " + seqNum);
             seqHandlerMap.put(seqNum, deliveryHandler);
         }
         UCommands commands = uCommandB.build();
