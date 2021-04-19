@@ -11,6 +11,7 @@
         <result column="dest_y" property="destY" />
         <result column="comment" property="comment" />
         <result column="distance" property="distance" />
+        <result column="whID" property="whID" />
     </resultMap>
 
     <select id="getAll" resultMap="shipInfoList">
@@ -19,8 +20,8 @@
     </select>
     <insert id="insertNewTracking" parameterType="edu.duke.erss.ups.entity.ShipInfo"
             useGeneratedKeys="true" keyColumn="tracking_id" keyProperty="shipInfo.trackingID">
-        insert into tracking_ship_tb (ship_id,status)
-        values (#{shipInfo.shipID},#{shipInfo.status});
+        insert into tracking_ship_tb (ship_id,status,whID)
+        values (#{shipInfo.shipID},#{shipInfo.status},#{shipInfo.whID});
     </insert>
     <update id="updateTracking" parameterType="edu.duke.erss.ups.entity.ShipInfo">
         update tracking_ship_tb
@@ -74,5 +75,11 @@
         update tracking_ship_tb
         set dest_x=#{x}, dest_y=#{y}
         where tracking_id=#{trackingID};
+    </update>
+
+    <update id="updateStatus">
+        update tracking_ship_tb
+        set status=#{status}
+        where ship_id=#{shipID};
     </update>
 </mapper>

@@ -53,7 +53,7 @@ public class UPSServer {
      * @throws IOException
      */
     void handle(Socket socket) throws IOException {
-        System.out.println("Start handling request from " + socket.getInetAddress());
+        System.out.println("@Amazon: Start handling request from " + socket.getInetAddress());
         CodedInputStream input = CodedInputStream.newInstance(socket.getInputStream());
         try {
             worldController.worldIDAmazonConnectBa.await();
@@ -77,7 +77,7 @@ public class UPSServer {
         new Thread(() -> {
             for (long ack : acks) {
                 if (amazonController.seqHandlerMap.containsKey(ack)) {
-                    System.out.println("Receive from amazon ack = " + ack);
+                    System.out.println("@Amazon: Receive from amazon ack = " + ack);
                     AmazonCommandHandler commandHandler = amazonController.seqHandlerMap.get(ack);
                     commandHandler.onReceive();
                     amazonController.seqHandlerMap.remove(ack);
@@ -90,7 +90,7 @@ public class UPSServer {
         new Thread(() -> {
             try {
                 for (AmazonPick pick : pickUps) {
-                    System.out.println("Receive from amazon pick up = " + pick.getShipid());
+                    System.out.println("@Amazon: Receive from amazon pick up = " + pick.getShipid());
                     ShipInfo shipInfo = new ShipInfo();
                     shipInfo.setShipID(pick.getShipid());
                     shipInfo.setStatus(ShipStatus.CREATED.getText());
@@ -106,8 +106,10 @@ public class UPSServer {
                     storeProductInfo(pick);
 
                     sendAck(pick.getSeq()); // send back to amazon
-                    worldController.allocateAvailableTrucks(shipInfo); // get to the world
+//                    worldController.allocateAvailableTrucks(shipInfo); // get to the world
+                    worldController.allocateAvailableTrucks(shipInfo);
                 }
+
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -124,7 +126,7 @@ public class UPSServer {
                 userTrackingDao.insertTracking(user.getId(), shipInfo.getTrackingID());
                 return;
             }
-            System.out.println("User not found: " + account);
+            System.out.println("@Amazon: User not found: " + account);
         }
     }
 
@@ -145,7 +147,7 @@ public class UPSServer {
         new Thread(() -> {
             try {
                 for (AmazonLoaded loaded : loadeds) {
-                    System.out.println("Receive from amazon loaded = " + loaded.getShipid() + " truck " + loaded.getTruckID());
+                    System.out.println("@Amazon: Receive from amazon loaded = " + loaded.getShipid() + " truck " + loaded.getTruckID());
                     ShipInfo shipInfo = trackingShipDao.getShipInfoByShipID(loaded.getShipid()).get(0);
                     sendAck(loaded.getSeq()); // send back to amazon
                     worldController.goDeliver(null, shipInfo);

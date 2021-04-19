@@ -8,16 +8,17 @@ import edu.duke.erss.ups.dao.UserDao;
 import edu.duke.erss.ups.entity.ShipInfo;
 import edu.duke.erss.ups.entity.ShipStatus;
 import edu.duke.erss.ups.entity.Truck;
+import edu.duke.erss.ups.entity.User;
 import edu.duke.erss.ups.proto.UPStoWorld.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
@@ -161,10 +162,57 @@ public class WorldController {
         int len = uResponses.getAcksCount();
         System.out.println("Received a UResponse: len of acks=" + uResponses.getAcksCount() + " uf=" + uResponses.getCompletionsCount()
                 + " truckStatus=" + uResponses.getTruckstatusCount() + " delieverd=" + uResponses.getDeliveredCount() + " err=" + uResponses.getErrorCount());
+
+        for (int i = 0; i < uResponses.getCompletionsCount(); ++i) {
+            UFinished uFinished = uResponses.getCompletions(i);
+            System.out.println("--- Truck " + uFinished.getTruckid() + " status: " + uFinished.getStatus());
+            sendAckCommand(uFinished.getSeqnum());
+            //database operation : truck arrive, waiting for package
+            List<ShipInfo> shipInfos = trackingShipDao.getShipInforByTruckID(uFinished.getTruckid());
+            int count = 0;
+            for (ShipInfo shipInfo : shipInfos) {
+                if (shipInfo.getStatus().equals(ShipStatus.INROUTE.getText())) {
+                    ++count;
+                    shipInfo.setStatus(ShipStatus.WAITING.getText());
+                    trackingShipDao.updateTracking(shipInfo);
+                    truckDao.updateTruckStatus(uFinished.getTruckid(), Truck.Status.ARR_WH.getText());
+                    //inform amazon to load
+                    ArrayList<Long> shipIDs = new ArrayList<>();
+                    shipIDs.add(shipInfo.getShipID());
+                    amazonController.sendTruckArrive(shipInfo.getTrackingID(), shipInfo.getTruckID(), shipInfo.getWhID(), shipIDs);
+                }
+            }
+            if (count == 0) {
+                truckDao.updateTruckStatus(uFinished.getTruckid(), Truck.Status.IDLE.getText());
+            }
+        }
+
+        for (int i = 0; i < uResponses.getTruckstatusCount(); ++i) {
+            UTruck uTruck = uResponses.getTruckstatus(i);
+            sendAckCommand(uTruck.getSeqnum()); // acking
+            // update distance
+            updateDistance(uTruck);
+        }
+
+        for (int i = 0; i < uResponses.getDeliveredCount(); ++i) {
+            UDeliveryMade uDeliveryMade = uResponses.getDelivered(i);
+            System.out.println("--- Package " + uDeliveryMade.getPackageid() + " of truck " + uDeliveryMade.getTruckid() + " delivered");
+            sendAckCommand(uDeliveryMade.getSeqnum()); // acking
+            sendAckCommand(uDeliveryMade.getSeqnum());
+
+            // database: Package delivered
+            trackingShipDao.updateStatus(uDeliveryMade.getPackageid(), ShipStatus.DELIVERED.getText());
+            ShipInfo shipInfo = trackingShipDao.getShipInfoByShipID(uDeliveryMade.getPackageid()).get(0);
+            //stop tracking
+            trackingRecords.remove(shipInfo.getTrackingID());
+            // inform amazon
+            amazonController.sendPackageDelivered(shipInfo);
+            emailInform(shipInfo.getTrackingID());
+        }
+
         for (int i = 0; i < len; ++i) {
             long ack = uResponses.getAcks(i);
             System.out.println("Received ack = " + ack + " at index = " + i);
-
             if (seqHandlerMap.containsKey(ack)) {
                 WorldCommandHandler handler = seqHandlerMap.get(ack);
                 handler.onReceive(uResponses, i);
@@ -174,16 +222,8 @@ public class WorldController {
                 }
                 continue; // skipping the loop
             }
-
             System.out.println("[DEBUG] ack already handled");
         }
-
-//        //UFinish of a truck completion of all packages
-//        if (uResponses.getAcksCount() == 0) {
-//            UFinished uFinished = uResponses.getCompletions(0);
-//            System.out.println("Truck " + uFinished.getTruckid() + " status = " + uFinished.getStatus());
-//            sendAckCommand(uFinished.getSeqnum());
-//        }
     }
 
     public void queryWorld(int truckID) {
@@ -203,6 +243,24 @@ public class WorldController {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    double calcDistance(double dx, double dy, double sx, double sy) {
+        double deltaX = Math.abs(dx - sx);
+        double deltaY = Math.abs(dy - sy);
+        return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+    }
+
+    void updateDistance(UTruck currTruck) {
+        List<ShipInfo> shipInfos = trackingShipDao.getShipInforByTruckID(currTruck.getTruckid());
+        for (ShipInfo shipInfo : shipInfos) {
+            int destX = shipInfo.getDestX();
+            int destY = shipInfo.getDestY();
+            double distance = calcDistance(destX, destY, currTruck.getX(), currTruck.getY());
+            System.out.println("Update distance from Truck " + currTruck.getTruckid() + " of tracking "
+                    + shipInfo.getTrackingID() + ": " + distance);
+            trackingShipDao.updateDistance(shipInfo.getShipID(), distance);
+        }
     }
 
     void queryWorldWithSeq(long pickSeq, int truckID, boolean goPickUp, ShipInfo shipInfo, long querySeq) throws IOException {
@@ -248,13 +306,14 @@ public class WorldController {
      * Call this to send truck to pick up
      * @param shipInfo info about the shipment
      */
-    public void allocateAvailableTrucks(ShipInfo shipInfo) {
+    public void allocateAvailableTrucks(ShipInfo shipInfo) throws IOException {
         int truckID = truck_alloc++;
         if (truck_alloc >= TRUCK_CNT) {
             truck_alloc %= TRUCK_CNT;
         }
         shipInfo.setTruckID(truckID);
-        queryWorld(truckID, true, shipInfo);
+//        queryWorld(truckID, true, shipInfo);
+        pickUp(truckID, shipInfo);
     }
 
     /**
@@ -349,5 +408,46 @@ public class WorldController {
         output.writeUInt32NoTag(data.length);
         commands.writeTo(output);
         output.flush();
+    }
+
+    private void emailInform(Long tracking) {
+        List<User> users = this.userDao.getUserByTrackingID(tracking);
+        if (users != null && !users.isEmpty()) {
+            User user = users.get(0);
+            String from = "shaoyf98@gmail.com";
+            String to = user.getEmail();
+            String subject = "Your package has been delivered!";
+            String msg = "Dear " + user.getName() + ", your shipment has been delivered!";
+            sendEmail(from, to, subject, msg);
+            return;
+        }
+        throw new IllegalArgumentException("User not exist! email not sent.");
+    }
+
+    public static void sendEmail(String from, String to, String subject, String msg) {
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+
+        // get Session
+        Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(from, "rqahmutmfvbzdpmt");
+            }
+        });
+        // compose message
+        try {
+            MimeMessage message = new MimeMessage(session);
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            message.setSubject(subject);
+            message.setText(msg);
+            // send message
+            Transport.send(message);
+            System.out.println("message sent successfully");
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
