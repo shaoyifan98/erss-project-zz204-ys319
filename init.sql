@@ -14,7 +14,7 @@ create table tracking_ship_tb (
                                   dest_y integer,
                                   comment varchar(200),
                                   distance double precision,
-                                      whID integer,
+                                      whID integer
 );
 
 create table user_tracking_tb (
