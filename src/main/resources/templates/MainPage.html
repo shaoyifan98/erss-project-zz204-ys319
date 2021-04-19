@@ -208,7 +208,7 @@
 
     <div class="main">
         <div class="topNav">
-            <a th:if="${user ne null}" display = "inline-block" class = "lg login_btn1" type="button" th:href="@{/login}" >Login</a>
+            <a th:if="${user == null}" display = "inline-block" class = "lg login_btn1" type="button" th:href="@{/login}" >Login</a>
             <a display = "inline-block" class = "lg login_btn2" type="button" th:href="@{/logout}" >Logout</a>
             <a display = "inline-block" class = "lg login_btn3" type="button" th:href="@{/userDetail}" >View my packages</a>
         </div>
