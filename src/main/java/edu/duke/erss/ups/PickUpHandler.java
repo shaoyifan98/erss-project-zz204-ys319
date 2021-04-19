@@ -28,7 +28,6 @@ public class PickUpHandler extends WorldCommandHandler {
             public void run() {
                 try {
                     System.out.println("Resending pick up seq=" + seq + ", tracking=" + shipInfo.getTrackingID());
-//                    worldController.allocateAvailableTrucks(seq, shipInfo);
                     if (seq == -1) {
                         worldController.pickUp(truckID, shipInfo);
                     }
@@ -47,33 +46,5 @@ public class PickUpHandler extends WorldCommandHandler {
     @Override
     public void onReceive(UResponses uResponses, int index) {
         cancelTimer();
-//        new Thread(() -> {
-//            try {
-//                if (uResponses.getErrorCount() != 0) {
-//                    int errIdx = index - uResponses.getCompletionsCount() - uResponses.getDeliveredCount() - uResponses.getTruckstatusCount();
-//                    System.out.println("Error delivering: " + uResponses.getError(errIdx).getErr() + ". Seq = " +
-//                            uResponses.getError(errIdx).getOriginseqnum());
-//                    worldController.sendAckCommand(uResponses.getError(errIdx).getSeqnum());
-//                    return;
-//                }
-//                UFinished uFinished = uResponses.getCompletions(index);
-//                System.out.println("--- Truck " + uFinished.getTruckid() + " status: " + uFinished.getStatus());
-//                worldController.sendAckCommand(uFinished.getSeqnum());
-//
-//                //database operation : truck arrive, waiting for package
-//                shipInfo.setStatus(ShipStatus.WAITING.getText());
-//                trackingShipDao.updateTracking(shipInfo);
-//                truckDao.updateTruckStatus(truckID, Truck.Status.ARR_WH.getText());
-//
-//                //inform amazon to load
-//                ArrayList<Long> shipIDs = new ArrayList<>();
-//                shipIDs.add(shipInfo.getShipID());
-//                worldController.amazonController.sendTruckArrive(shipInfo.getTrackingID(), shipInfo.getTruckID(), shipInfo.getWhID(), shipIDs);
-//            }
-//            catch (IOException e) {
-//                System.out.println("sending ack of response of pick IO: " + e.getMessage());
-//            }
-//
-//        }).start();
     }
 }

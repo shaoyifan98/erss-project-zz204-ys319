@@ -1,6 +1,4 @@
 package edu.duke.erss.ups;
-
-import edu.duke.erss.ups.proto.UPStoWorld.UCommands;
 import edu.duke.erss.ups.proto.UPStoWorld.UResponses;
 
 import java.util.Timer;

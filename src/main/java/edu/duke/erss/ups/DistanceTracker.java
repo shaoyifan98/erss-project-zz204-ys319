@@ -2,6 +2,7 @@ package edu.duke.erss.ups;
 
 import edu.duke.erss.ups.dao.TrackingShipDao;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 public class DistanceTracker extends Thread {
@@ -18,7 +19,7 @@ public class DistanceTracker extends Thread {
         System.out.println("Running distance checker ... ");
         while (true) {
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1000);
                 if (trackingTruckMap.isEmpty()) {
                     continue;
                 }
@@ -26,6 +27,8 @@ public class DistanceTracker extends Thread {
                     worldController.queryWorld(trackingTruckMap.get(trackingNum));
                 }
             } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
