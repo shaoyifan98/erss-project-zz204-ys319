@@ -171,6 +171,7 @@ public class WorldController {
             List<ShipInfo> shipInfos = trackingShipDao.getShipInforByTruckID(uFinished.getTruckid());
             int count = 0;
             for (ShipInfo shipInfo : shipInfos) {
+                System.out.println("ship status : " + shipInfo.getStatus());
                 if (shipInfo.getStatus().equals(ShipStatus.INROUTE.getText())) {
                     ++count;
                     shipInfo.setStatus(ShipStatus.WAITING.getText());
@@ -364,6 +365,7 @@ public class WorldController {
         output.flush();
         // update truck status
         truckDao.updateTruckStatus(truckID, Truck.Status.TRAVELING.getText());
+        trackingShipDao.updateStatus(shipInfo.getShipID(), ShipStatus.INROUTE.getText());
     }
 
     public void goDeliver(Long oldSeq, ShipInfo shipInfo) throws IOException {
