@@ -1,10 +1,12 @@
 package edu.duke.erss.ups;
 
 import edu.duke.erss.ups.dao.TrackingShipDao;
+import edu.duke.erss.ups.dao.TruckDao;
 import edu.duke.erss.ups.dao.UserDao;
 import edu.duke.erss.ups.dao.UserTrackingDao;
 import edu.duke.erss.ups.entity.ShipInfo;
 import edu.duke.erss.ups.entity.ShipStatus;
+import edu.duke.erss.ups.entity.Truck;
 import edu.duke.erss.ups.entity.User;
 import edu.duke.erss.ups.proto.UPStoWorld.UDeliveryLocation;
 import edu.duke.erss.ups.proto.UPStoWorld.UDeliveryMade;
@@ -26,13 +28,15 @@ public class DeliveryHandler extends WorldCommandHandler {
 
     private TrackingShipDao trackingShipDao;
     private UserDao userDao;
+    private TruckDao truckDao;
 
-    DeliveryHandler(long seq, WorldController worldController, ShipInfo shipInfo, TrackingShipDao trackingShipDao, UserDao userDao) {
+    DeliveryHandler(long seq, WorldController worldController, ShipInfo shipInfo, TrackingShipDao trackingShipDao, UserDao userDao, TruckDao truckDao) {
         super(seq, shipInfo.getTruckID(), worldController);
         this.locations = new ArrayList<>();
         this.shipInfo = shipInfo;
         this.trackingShipDao = trackingShipDao;
         this.userDao = userDao;
+        this.truckDao = truckDao;
     }
 
     public void addLocations(ArrayList<UDeliveryLocation> locations) {
@@ -68,8 +72,7 @@ public class DeliveryHandler extends WorldCommandHandler {
                     return;
                 }
 
-                int deliverIdx = index - uResponses.getCompletionsCount();
-                UDeliveryMade uDeliveryMade = uResponses.getDelivered(deliverIdx);
+                UDeliveryMade uDeliveryMade = getDeliver(uResponses, index);
                 System.out.println("Package " + uDeliveryMade.getPackageid() + " of truck " + uDeliveryMade.getTruckid() + " delivered");
                 worldController.sendAckCommand(uDeliveryMade.getSeqnum()); // acking
 
@@ -96,19 +99,46 @@ public class DeliveryHandler extends WorldCommandHandler {
 
                 // inform amazon
                 worldController.amazonController.sendPackageDelivered(shipInfo);
-                List<User> users = this.userDao.getUserByTrackingID(shipInfo.getTrackingID());
-                if (users != null && !users.isEmpty()) {
-                    User user = users.get(0);
-                    String from = "shaoyf98@gmail.com";
-                    String to = user.getEmail();
-                    String subject = "Your package has been delivered!";
-                    String msg = "Dear " + user.getName() + ", your shipment has been delivered!";
-                    sendEmail(from, to, subject, msg);
-                }
+                emailInform();
             } catch (IOException e) {
+                System.out.println(e.getMessage());
+            } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
         }).start();
+    }
+
+    private void emailInform() {
+        List<User> users = this.userDao.getUserByTrackingID(shipInfo.getTrackingID());
+        if (users != null && !users.isEmpty()) {
+            User user = users.get(0);
+            String from = "shaoyf98@gmail.com";
+            String to = user.getEmail();
+            String subject = "Your package has been delivered!";
+            String msg = "Dear " + user.getName() + ", your shipment has been delivered!";
+            sendEmail(from, to, subject, msg);
+            return;
+        }
+        throw new IllegalArgumentException("User not exist! email not sent.");
+    }
+
+    private UDeliveryMade getDeliver(UResponses uResponses, int index) {
+        int deliverIdx;
+        int countOfContent = uResponses.getCompletionsCount() + uResponses.getDeliveredCount() +
+                uResponses.getTruckstatusCount() + uResponses.getErrorCount();
+        UDeliveryMade uDeliveryMade;
+        if (uResponses.getAcksCount() == countOfContent) {
+            deliverIdx = index - uResponses.getCompletionsCount();
+            uDeliveryMade = uResponses.getDelivered(deliverIdx);
+        }
+        else {
+            int diff = countOfContent - uResponses.getAcksCount();
+            deliverIdx = index - uResponses.getCompletionsCount() + diff;
+            // Truck finished
+            uDeliveryMade = uResponses.getDelivered(deliverIdx);
+            truckDao.updateTruckStatus(uDeliveryMade.getTruckid(), Truck.Status.IDLE.getText());
+        }
+        return uDeliveryMade;
     }
 
 

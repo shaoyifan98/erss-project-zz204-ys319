@@ -178,12 +178,12 @@ public class WorldController {
             System.out.println("[DEBUG] ack already handled");
         }
 
-        //UFinish of a truck completion of all packages
-        if (uResponses.getAcksCount() == 0) {
-            UFinished uFinished = uResponses.getCompletions(0);
-            System.out.println("Truck " + uFinished.getTruckid() + " status = " + uFinished.getStatus());
-            sendAckCommand(uFinished.getSeqnum());
-        }
+//        //UFinish of a truck completion of all packages
+//        if (uResponses.getAcksCount() == 0) {
+//            UFinished uFinished = uResponses.getCompletions(0);
+//            System.out.println("Truck " + uFinished.getTruckid() + " status = " + uFinished.getStatus());
+//            sendAckCommand(uFinished.getSeqnum());
+//        }
     }
 
     public void queryWorld(int truckID) {
@@ -322,7 +322,7 @@ public class WorldController {
         uCommandB.addDeliveries(uGoDeliverB.build());
         if (!seqHandlerMap.containsKey(seqNum)) {
             //putting in the map
-            DeliveryHandler deliveryHandler = new DeliveryHandler(seqNum,this, shipInfo, trackingShipDao, userDao);
+            DeliveryHandler deliveryHandler = new DeliveryHandler(seqNum,this, shipInfo, trackingShipDao, userDao, truckDao);
             deliveryHandler.addLocations(locations);
             deliveryHandler.setTimerAndTask();
             System.out.println("@Sequence: start listen to deliver " + seqNum);
