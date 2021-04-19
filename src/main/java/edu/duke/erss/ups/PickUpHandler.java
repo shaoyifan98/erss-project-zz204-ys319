@@ -32,13 +32,13 @@ public class PickUpHandler extends WorldCommandHandler {
             public void run() {
                 try {
                     System.out.println("Resending pick up seq=" + seq + ", tracking=" + shipInfo.getTrackingID());
-                    worldController.allocateAvailableTrucks(seq, shipInfo);
-//                    if (seq == -1) {
-//                        worldController.pickUp(truckID, shipInfo);
-//                    }
-//                    else {
-//                        worldController.pickUp(seq, truckID, shipInfo);
-//                    }
+//                    worldController.allocateAvailableTrucks(seq, shipInfo);
+                    if (seq == -1) {
+                        worldController.pickUp(truckID, shipInfo);
+                    }
+                    else {
+                        worldController.pickUp(seq, truckID, shipInfo);
+                    }
 
                 } catch (IOException e) {
                     e.printStackTrace();
