@@ -62,7 +62,6 @@ public class UPSServer {
         }
         amazonController.sendWorld(WorldController.worldID, socket);
         while (true) {
-//            System.out.println(input.readString());
             int size = input.readUInt32();
             int limit = input.pushLimit(size);
             UACommands uaCommands = UACommands.parseFrom(input);
@@ -98,14 +97,13 @@ public class UPSServer {
                     shipInfo.setDestX(pick.getX());
                     shipInfo.setDestY(pick.getY());
 
-                    // associate with user_account
-                    associateWithAccount(pick, shipInfo);
                     // save to product table
                     storeProductInfo(pick);
-
+                    int truckID = worldController.allocateAvailableTrucks(shipInfo);
+                    trackingShipDao.insertNewTracking(shipInfo); // update db
+                    associateWithAccount(pick, shipInfo);
                     sendAck(pick.getSeq()); // send back to amazon
-//                    worldController.allocateAvailableTrucks(shipInfo); // get to the world
-                    worldController.allocateAvailableTrucks(shipInfo);
+                    worldController.pickUp(truckID, shipInfo);
                 }
 
             }
@@ -118,8 +116,9 @@ public class UPSServer {
     void associateWithAccount(AmazonPick pick, ShipInfo shipInfo) {
         String account = pick.getUpsAccount();
         if (!account.isEmpty()) {
+            System.out.println("Account : " + account);
             List<User> result = userDao.getUserByName(account);
-            if (!result.isEmpty()) {
+            if (result != null && !result.isEmpty()) {
                 User user = result.get(0);
                 userTrackingDao.insertTracking(user.getId(), shipInfo.getTrackingID());
                 return;

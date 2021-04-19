@@ -298,15 +298,13 @@ public class WorldController {
      * Call this to send truck to pick up
      * @param shipInfo info about the shipment
      */
-    public void allocateAvailableTrucks(ShipInfo shipInfo) throws IOException {
+    public int allocateAvailableTrucks(ShipInfo shipInfo) throws IOException {
         int truckID = truck_alloc++;
         if (truck_alloc >= TRUCK_CNT) {
             truck_alloc %= TRUCK_CNT;
         }
         shipInfo.setTruckID(truckID);
-        // insert new tracking
-        trackingShipDao.insertNewTracking(shipInfo); // update db
-        pickUp(truckID, shipInfo);
+        return truckID;
     }
 
     /**
