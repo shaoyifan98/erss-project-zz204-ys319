@@ -290,14 +290,14 @@ public class WorldController {
         UGoPickup.Builder uGoPickB = UGoPickup.newBuilder();
         uGoPickB.setSeqnum(seqNum).setTruckid(truckID).setWhid(shipInfo.getWhID());
         uCommandB.addPickups(uGoPickB.build());
-        if (!seqHandlerMap.containsKey(seqNum)) {
-            //putting in the map
-            PickUpHandler pickUpHandler = new PickUpHandler(seqNum, truckID, shipInfo, this,
-                    trackingShipDao, truckDao);
-            pickUpHandler.setTimerAndTask();
-            System.out.println("@Sequence: start listen to pick up " + seqNum);
-            seqHandlerMap.put(seqNum, pickUpHandler);
-        }
+
+        //putting in the map
+        PickUpHandler pickUpHandler = new PickUpHandler(seqNum, truckID, shipInfo, this,
+                trackingShipDao, truckDao);
+        pickUpHandler.setTimerAndTask();
+        System.out.println("@Sequence: start listen to pick up " + seqNum);
+        seqHandlerMap.put(seqNum, pickUpHandler);
+
         UCommands commands = uCommandB.build();
         byte[] data = commands.toByteArray();
         output.writeUInt32NoTag(data.length);
