@@ -119,31 +119,13 @@
                 <tbody style="font-size: medium; color: black">
                     <tr th:each="result:${results}">
                        <td>
-                            <a th:text="${result.trackingID}" th:href="@{/detail(id=${result.trackingID})}"></a>
+                            <a style="display: inline-block; background-color: #5cefe3; padding: 1px; width: 50%; border: 1px;" th:text="${result.trackingID}" th:href="@{/detail(id=${result.trackingID})}"></a>
                        </td>
                        <td th:text="${result.shipID}"></td>
                        <td th:text="'(' + ${result.destX} + ' ,' + ${result.destY} + ')'"></td>
                        <td th:text="${result.distance}"></td>
                        <td th:text="${result.status}"></td>
                     </tr>
-<!--                    <tr th:each="result:${results}">-->
-<!--                        <td>-->
-<!--                            <a th:text="${result.trackingID}" th:href="@{/detail(id=${result.trackingID})}"></a>-->
-<!--                        </td>-->
-<!--                        <td th:text="${result.shipID}"></td>-->
-<!--                        <td th:text="'(' + ${result.destX} + ' ,' + ${result.destY} + ')'"></td>-->
-<!--                        <td th:text="${result.distance}"></td>-->
-<!--                        <td th:text="${result.status}"></td>-->
-<!--                    </tr>-->
-<!--                    <tr th:each="result:${results}">-->
-<!--                        <td>-->
-<!--                            <a th:text="${result.trackingID}" th:href="@{/detail(id=${result.trackingID})}"></a>-->
-<!--                        </td>-->
-<!--                        <td th:text="${result.shipID}"></td>-->
-<!--                        <td th:text="'(' + ${result.destX} + ' ,' + ${result.destY} + ')'"></td>-->
-<!--                        <td th:text="${result.distance}"></td>-->
-<!--                        <td th:text="${result.status}"></td>-->
-<!--                    </tr>-->
                 </tbody>
             </table>
         </div>
