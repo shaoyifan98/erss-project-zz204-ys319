@@ -7,7 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public abstract class WorldCommandHandler {
-    protected final Long TIME_OUT = 1000 * 3L;
+    protected final Long TIME_OUT = 1000 * 5L;
     protected Timer timer;
     protected TimerTask resend;
 

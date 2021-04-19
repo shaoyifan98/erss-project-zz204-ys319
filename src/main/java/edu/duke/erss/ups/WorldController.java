@@ -79,7 +79,7 @@ public class WorldController {
                 readInitialize();
                 worldIDAmazonConnectBa.await();
                 //start listen world messages
-//                distanceTracker.start();
+                distanceTracker.start();
                 startListener();
             }
             catch (IOException e) {
@@ -164,6 +164,7 @@ public class WorldController {
         for (int i = 0; i < len; ++i) {
             long ack = uResponses.getAcks(i);
             System.out.println("Received ack = " + ack + " at index = " + i);
+
             if (seqHandlerMap.containsKey(ack)) {
                 WorldCommandHandler handler = seqHandlerMap.get(ack);
                 handler.onReceive(uResponses, i);
@@ -172,19 +173,8 @@ public class WorldController {
                 }
                 continue; // skipping the loop
             }
+
             System.out.println("[DEBUG] ack already handled");
-            if (uResponses.getErrorCount() > 0) {
-                sendAckCommand(uResponses.getError(i).getSeqnum());
-            }
-            else if (uResponses.getCompletionsCount() > 0) {
-                sendAckCommand(uResponses.getCompletions(i).getSeqnum());
-            }
-            else if (uResponses.getDeliveredCount() > 0) {
-                sendAckCommand(uResponses.getDelivered(i).getSeqnum());
-            }
-            else if (uResponses.getTruckstatusCount() > 0) {
-                sendAckCommand(uResponses.getTruckstatus(i).getSeqnum());
-            }
         }
 
         //UFinish of a truck completion of all packages

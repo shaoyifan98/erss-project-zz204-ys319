@@ -31,7 +31,7 @@ public class PickUpHandler extends WorldCommandHandler {
             @Override
             public void run() {
                 try {
-                    System.out.println("Resending seq=" + seq + ", tracking=" + shipInfo.getTrackingID());
+                    System.out.println("Resending pick up seq=" + seq + ", tracking=" + shipInfo.getTrackingID());
                     worldController.allocateAvailableTrucks(seq, shipInfo);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -46,6 +46,13 @@ public class PickUpHandler extends WorldCommandHandler {
         cancelTimer();
         new Thread(() -> {
             try {
+                if (uResponses.getErrorCount() != 0) {
+                    int errIdx = index - uResponses.getCompletionsCount() - uResponses.getDeliveredCount() - uResponses.getTruckstatusCount();
+                    System.out.println("Error delivering: " + uResponses.getError(errIdx).getErr() + ". Seq = " +
+                            uResponses.getError(errIdx).getOriginseqnum());
+                    worldController.sendAckCommand(uResponses.getError(errIdx).getSeqnum());
+                    return;
+                }
                 UFinished uFinished = uResponses.getCompletions(index);
                 System.out.println("Truck " + uFinished.getTruckid() + " status: " + uFinished.getStatus());
                 worldController.sendAckCommand(uFinished.getSeqnum());

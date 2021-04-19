@@ -17,7 +17,7 @@ public class DistanceTracker extends Thread {
     public void run() {
         while (true) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(3000);
                 if (trackingTruckMap.isEmpty()) {
                     continue;
                 }

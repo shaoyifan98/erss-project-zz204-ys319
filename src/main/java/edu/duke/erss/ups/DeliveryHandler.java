@@ -45,6 +45,7 @@ public class DeliveryHandler extends WorldCommandHandler {
             @Override
             public void run() {
                 try {
+                    System.out.println("Resend go deliver seq=" + seq + ", tracking=" + shipInfo.getTrackingID());
                     worldController.goDeliver(seq, shipInfo);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -60,13 +61,18 @@ public class DeliveryHandler extends WorldCommandHandler {
         new Thread(() -> {
             try {
                 if (uResponses.getErrorCount() != 0) {
-                    System.out.println("Error delivering: " + uResponses.getError(index).getErr() + ". Seq = " +
-                            uResponses.getError(index).getOriginseqnum());
-                    worldController.sendAckCommand(uResponses.getError(index).getSeqnum());
+                    int errIdx = index - uResponses.getCompletionsCount() - uResponses.getDeliveredCount() - uResponses.getTruckstatusCount();
+                    System.out.println("Error delivering: " + uResponses.getError(errIdx).getErr() + ". Seq = " +
+                            uResponses.getError(errIdx).getOriginseqnum());
+                    worldController.sendAckCommand(uResponses.getError(errIdx).getSeqnum());
                     return;
                 }
-                UDeliveryMade uDeliveryMade = uResponses.getDelivered(index);
+
+                int deliverIdx = index - uResponses.getCompletionsCount();
+                UDeliveryMade uDeliveryMade = uResponses.getDelivered(deliverIdx);
                 System.out.println("Package " + uDeliveryMade.getPackageid() + " of truck " + uDeliveryMade.getTruckid() + " delivered");
+                worldController.sendAckCommand(uDeliveryMade.getSeqnum()); // acking
+
                 UDeliveryLocation toDelete = null;
                 for (UDeliveryLocation location : locations) {
                     if (location.getPackageid() == uDeliveryMade.getPackageid()) {

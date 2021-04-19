@@ -75,6 +75,7 @@ public class AmazonController {
                 seqHandlerMap.put(seq, commandHandler);
                 commandHandler.setTimerAndTask();
 
+                System.out.println("Sending to amazon: Truck " + truckID + " arrived at wh" + whID);
                 sendResponse(output, responses);
             }
             catch (IOException e) {
@@ -100,6 +101,7 @@ public class AmazonController {
                 seqHandlerMap.put(seq, commandHandler);
                 commandHandler.setTimerAndTask();
 
+                System.out.println("Sending to amazon: package " + shipInfo.getShipID() + " delivered by truck " + shipInfo.getTruckID());
                 sendResponse(output, responses);
 
 //                handleAck(socket, seq);
