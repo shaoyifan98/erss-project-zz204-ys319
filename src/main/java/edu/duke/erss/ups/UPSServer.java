@@ -100,9 +100,10 @@ public class UPSServer {
                     // save to product table
                     storeProductInfo(pick);
                     int truckID = worldController.allocateAvailableTrucks(shipInfo);
-                    trackingShipDao.insertNewTracking(shipInfo); // update db
+                    trackingShipDao.insertNewTracking(shipInfo); // update db & get tracking ID
                     associateWithAccount(pick, shipInfo);
                     sendAck(pick.getSeq()); // send back to amazon
+                    worldController.trackingRecords.put(shipInfo.getTrackingID(), shipInfo.getTruckID());
                     worldController.pickUp(truckID, shipInfo);
                 }
 
