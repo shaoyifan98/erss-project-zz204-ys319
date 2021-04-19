@@ -160,7 +160,7 @@ public class WorldController {
         input.popLimit(limit);
         int len = uResponses.getAcksCount();
         System.out.println("Received a UResponse: len of acks=" + uResponses.getAcksCount() + " uf=" + uResponses.getCompletionsCount()
-                + " truckStatus=" + uResponses.getTruckstatusCount() + " delieverd=" + uResponses.getDeliveredCount());
+                + " truckStatus=" + uResponses.getTruckstatusCount() + " delieverd=" + uResponses.getDeliveredCount() + " err=" + uResponses.getErrorCount());
         for (int i = 0; i < len; ++i) {
             long ack = uResponses.getAcks(i);
             System.out.println("Received ack = " + ack + " at index = " + i);
