@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import edu.duke.erss.ups.dao.UserTrackingDao;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,14 +30,16 @@ public class DetailController {
     private TruckDao truckDao;
     private WorldController worldController;
     private MailController mailController;
+    private UserTrackingDao userTrackingDao;
 
     public DetailController(TrackingShipDao trackingShipDao, ProductDao productDao, TruckDao truckDao,
-            WorldController worldController, MailController mailController) {
+            WorldController worldController, MailController mailController, UserTrackingDao userTrackingDao) {
         this.trackingShipDao = trackingShipDao;
         this.productDao = productDao;
         this.truckDao = truckDao;
         this.worldController = worldController;
         this.mailController = mailController;
+        this.userTrackingDao = userTrackingDao;
     }
 
     @RequestMapping("/detail")
@@ -63,6 +66,7 @@ public class DetailController {
             HttpServletRequest request) {
         HttpSession session = request.getSession();
         Long trackingID = (Long) session.getAttribute("currTrackingID");
+        User user = (User) session.getAttribute("user");
         System.out.println("id is" + trackingID);
         int _x = 0;
         int _y = 0;
@@ -77,6 +81,11 @@ public class DetailController {
         System.out.println("change destination: " + "x: " + x + "y: " + y);
         List<Truck> trucks = truckDao.getTruckByTrackingID(trackingID);
         List<ShipInfo> shipInfos = trackingShipDao.getShipInfoByTrackingID(trackingID);
+        List<Long> userID = userTrackingDao.getUserIDByTrackingID(trackingID);
+        if(user == null || userID.size() == 0 || userID.get(0)!= user.getId().intValue()){
+            model.addAttribute("message", "Can not change because the package is not belonged to you!");
+            return "changeDestination";
+        }
         ShipInfo shipInfo = shipInfos.get(0);
         String status = trucks.get(0).getStatus();
         if (status.equals("traveling") || status.equals("arrive warehouse")) {
