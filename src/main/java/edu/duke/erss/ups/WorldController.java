@@ -175,7 +175,7 @@ public class WorldController {
                 if (shipInfo.getStatus().equals(ShipStatus.INROUTE.getText())) {
                     ++count;
                     shipInfo.setStatus(ShipStatus.WAITING.getText());
-                    trackingShipDao.updateTracking(shipInfo);
+                    trackingShipDao.updateStatus(shipInfo.getShipID(), ShipStatus.WAITING.getText());
                     truckDao.updateTruckStatus(uFinished.getTruckid(), Truck.Status.ARR_WH.getText());
                     //inform amazon to load
                     ArrayList<Long> shipIDs = new ArrayList<>();
@@ -398,7 +398,7 @@ public class WorldController {
         output.flush();
         // Update DB
         shipInfo.setStatus(ShipStatus.DELIVERING.getText());
-        trackingShipDao.updateTracking(shipInfo);
+        trackingShipDao.updateStatus(shipInfo.getShipID(), ShipStatus.DELIVERING.getText());
         // update truck status
         truckDao.updateTruckStatus(shipInfo.getTruckID(), Truck.Status.DELIVERING.getText());
     }

@@ -20,8 +20,8 @@
     </select>
     <insert id="insertNewTracking" parameterType="edu.duke.erss.ups.entity.ShipInfo"
             useGeneratedKeys="true" keyColumn="tracking_id" keyProperty="shipInfo.trackingID">
-        insert into tracking_ship_tb (ship_id,status,whID)
-        values (#{shipInfo.shipID},#{shipInfo.status},#{shipInfo.whID});
+        insert into tracking_ship_tb (ship_id, truck_id, status, dest_X, dest_Y, whID)
+        values (#{shipInfo.shipID}, #{shipInfo.truckID}, #{shipInfo.status}, #{shipInfo.destX}, #{shipInfo.destY}, #{shipInfo.whID});
     </insert>
     <update id="updateTracking" parameterType="edu.duke.erss.ups.entity.ShipInfo">
         update tracking_ship_tb
