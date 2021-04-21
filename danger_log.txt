@@ -1,0 +1,16 @@
+1.Lose data when communicating with the Amazon
+Solved: Resend the data if ack is not received within a specific time.
+
+2.The behavior is unknown if an unlogged user visit the pages which required logged in.
+Solved: The log in status is kept in the session. When user visit pages which required logged in status, 
+the log in status in the session will be checked. If user is not logged in, he or she will be redirected to the login page.
+
+3.The user login info is kept in the session, and this may be attacked.
+To be solved: Java Spring Security framework can be used to enhance the security when it comes to user login function.
+
+4.Logged in user may try to modify the destination of other's shipment.
+Solved: When a logged in user try to modify the destination of a shipment, the server will check whether the current shipment
+is belonged to the current user. If not, a warning message will be shown.
+
+5.SQL injection attack
+Solved: User prepared sql statement in Java to avoid sql injection attack.
