@@ -67,7 +67,7 @@
 
      <update id="updateComment" >
         update tracking_ship_tb
-        set comment=#{comment},
+        set comment=#{comment}
         where tracking_id=#{trackingID};
     </update>
 
